@@ -7,9 +7,10 @@
 #include <map>
 #include <utility>
 #include "Cell.h"
+#include "block.h"
 
 std::vector<std::vector<Cell>> board;
-
+std::vector<Point> currBlockPoints;
 bool move_down = false;
 bool move_right = false;
 bool move_left = false;
@@ -20,30 +21,29 @@ std::pair<int,int> currPoint = std::pair<int,int>(0,0);
 void process_Normal_Keys(int key, int x, int y)  {
      switch (key) {
        case 27 :      break;
-       case 100 : move_left = true;  ;  break;
-       case 102 : move_right= true;  ;  break;
-       case 101 : drop_down = true;  ;  break;
-       case 103 : move_down = true;  ;  break;
+       case 100 : move_left = true; ; ;  break;
+       case 102 : move_right= true; ; ;  break;
+       case 101 : drop_down = true; ; ;  break;
+       case 103 : move_down = true; ; ;  break;
     }
 }
 
 void key_movement(int now_runs) {
-    if(move_down == true) {
-        board[currPoint.second][currPoint.first].setType('n');
-        board[currPoint.second][currPoint.first].draw(50);
-        currPoint.second+=1;
-        board[currPoint.second][currPoint.first].setType('T');
-        board[currPoint.second][currPoint.first].draw(50);
+    if(move_down) {
+        shift(0,1,50,1,currBlockPoints,board);
         move_down = false;
         player_moved = true;
-    }
-    if(move_right == true) {
-        board[currPoint.second][currPoint.first].setType('n');
-        board[currPoint.second][currPoint.first].draw(50);
-        currPoint.first+=1;
-        board[currPoint.second][currPoint.first].setType('T');
-        board[currPoint.second][currPoint.first].draw(50);
+    } else if(move_right) {
+        shift(1,0,50,1,currBlockPoints,board);
         move_right = false;
+        player_moved = true;
+    } else if (move_left) {
+        shift(-1,0,50,1,currBlockPoints,board);
+        move_left = false;
+        player_moved = true;
+    } else if (drop_down) {
+        shift(0,-1,50,1,currBlockPoints,board);
+        drop_down = false;
         player_moved = true;
     }
     glFlush();
@@ -69,6 +69,7 @@ void display(){
         board.emplace_back(row);
     }
     glFlush();
+    
 }
 
 void clearDisplay() {
@@ -85,23 +86,25 @@ void clearDisplay() {
 
 }
 
+void genBB() {
+    genBlocks('T',1,currBlockPoints,board);
+}
+
+bool draw_block = true;
 //get timing working first WORKs, now need to reset once player makes move
 void drawFallingBlock(int value) {
+    if (draw_block) {
+        genBB();
+        shift(0,0,50,1,currBlockPoints,board);
+        draw_block = false;        
+    }
     if (player_moved == true) {
         player_moved = false;
-        glutTimerFunc(1000, drawFallingBlock, 1);
+        glutTimerFunc(500, drawFallingBlock, 1);
         return;
     }
-    if (currPoint.second+1 < numRows && currPoint.first +1 < numCols) {
-        board[currPoint.second][currPoint.first].setType('n');
-        board[currPoint.second][currPoint.first].draw(50);
-        currPoint.second +=1;
-        board[currPoint.second][currPoint.first].setType('T');
-        board[currPoint.second][currPoint.first].draw(50);
-        //drawCell(y,x,30,set_RGB(1,0.2,0.8),50);
-        std::cout << "whats up " << value  << std::endl;
-        glutTimerFunc(1000, drawFallingBlock, 0);
-    }
+    shift(0,1,50,1,currBlockPoints,board);
+    glutTimerFunc(1000, drawFallingBlock, 0);
 }
 
 
@@ -117,6 +120,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(display);
     glutTimerFunc(1000,drawFallingBlock,0);
     glutSpecialFunc( process_Normal_Keys );
+    
     glutTimerFunc(0,key_movement,0);
     glutMainLoop();
     return 0;

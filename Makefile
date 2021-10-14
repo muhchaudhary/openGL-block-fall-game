@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -lglut -lGLU -lGL 
-OBJECTS = triangle.o GLwindow.o Cell.o 
+CXXFLAGS =  -Wall -MMD -lglut -lGLU -lGL 
+OBJECTS = triangle.o GLwindow.o Cell.o block.o
 DEPENDS = ${OBJECTS:.o=.d}
 EXEC = triangle
 

@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Oct 14 12:23:01 2021
+# Make data base, printed on Thu Oct 14 12:40:10 2021
 
 # Variables
 
@@ -110,8 +110,8 @@ WAYLAND_DISPLAY = wayland-0
 XDG_SESSION_DESKTOP = GNOME
 # environment
 VSCODE_CRASH_REPORTER_START_OPTIONS = {"companyName":"Microsoft","productName":"Code - OSS","submitURL":"","uploadToServer":false}
-# makefile (from 'Makefile', line 1)
-MAKEFILE_LIST := Makefile
+# makefile (from 'block.d', line 1)
+MAKEFILE_LIST := Makefile triangle.d GLwindow.d Cell.d block.d
 # automatic
 @F = $(notdir $@)
 # environment
@@ -201,7 +201,7 @@ DESKTOP_SESSION = gnome
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = GNOME
 # makefile (from 'Makefile', line 3)
-OBJECTS = triangle.o GLwindow.o Cell.o 
+OBJECTS = triangle.o GLwindow.o Cell.o block.o
 # 'override' directive
 GNUMAKEFLAGS := 
 # environment
@@ -263,7 +263,7 @@ VSCODE_CLI = 1
 # environment
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # makefile (from 'Makefile', line 2)
-CXXFLAGS = -lglut -lGLU -lGL 
+CXXFLAGS = -Wall -MMD -lglut -lGLU -lGL 
 # environment
 CSF_StandardDefaults = /usr/share/opencascade/resources/StdResource
 # default
@@ -275,7 +275,7 @@ XDG_MENU_PREFIX = gnome-
 # environment
 LC_IDENTIFICATION = en_CA.UTF-8
 # variable set hash-table stats:
-# Load=131/1024=13%, Rehash=0, Collisions=11/165=7%
+# Load=131/1024=13%, Rehash=0, Collisions=11/173=6%
 
 # Pattern-specific Variable Values
 
@@ -283,10 +283,9 @@ LC_IDENTIFICATION = en_CA.UTF-8
 
 # Directories
 
- 
-# . (device 65024, inode 8003940): 18 files, no impossibilities.
+# . (device 65024, inode 8003940): 23 files, no impossibilities.
 
-# 18 files, no impossibilities in 1 directories.
+# 23 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -295,18 +294,50 @@ LC_IDENTIFICATION = en_CA.UTF-8
 # Files
 
 # Not a target:
+block.cc:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+GLwindow.cc:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+ 
+
+# Not a target:
 Cell.d:
 #  Implicit rule search has been done.
-#  File does not exist.
+#  Last modified 2021-10-14 12:39:45.115017778
 #  File has been updated.
-#  Failed to be updated.
+#  Successfully updated.
+
+# Not a target:
+Cell.cc:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2021-10-14 12:22:50.881460433
+#  Last modified 2021-10-14 12:39:42.25168557
 #  File has been updated.
 #  Successfully updated.
+
+# Not a target:
+block.d:
+#  Implicit rule search has been done.
+#  Last modified 2021-10-14 12:39:45.291684375
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+block.h:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 clean:
 #  Phony target (prerequisite of .PHONY).
@@ -316,7 +347,13 @@ clean:
 #  recipe to execute (from 'Makefile', line 14):
 	rm ${DEPENDS} ${OBJECTS} ${EXEC}
 
-triangle: triangle.o GLwindow.o Cell.o
+# Not a target:
+Cell.h:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+triangle: triangle.o GLwindow.o Cell.o block.o
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -329,8 +366,7 @@ triangle: triangle.o GLwindow.o Cell.o
 #  Modification time never checked.
 #  File has not been updated.
 
-# Not a target:
-GLwindow.o:
+GLwindow.o: GLwindow.cc GLwindow.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -343,13 +379,17 @@ all:
 #  File has not been updated.
 
 # Not a target:
-triangle.o:
+GLwindow.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
-# Not a target:
-Cell.o:
+triangle.o: triangle.cc GLwindow.h Cell.h block.h
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+Cell.o: Cell.cc Cell.h GLwindow.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -357,36 +397,47 @@ Cell.o:
 # Not a target:
 triangle.d:
 #  Implicit rule search has been done.
-#  File does not exist.
+#  Last modified 2021-10-14 12:39:23.288359567
 #  File has been updated.
-#  Failed to be updated.
+#  Successfully updated.
+
+# Not a target:
+triangle.cc:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 GLwindow.d:
 #  Implicit rule search has been done.
-#  File does not exist.
+#  Last modified 2021-10-14 12:39:44.628351303
 #  File has been updated.
-#  Failed to be updated.
+#  Successfully updated.
 
 .PHONY: clean
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
+block.o: block.cc block.h
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 # files hash-table stats:
-# Load=13/1024=1%, Rehash=0, Collisions=2/31=6%
+# Load=22/1024=2%, Rehash=0, Collisions=3/57=5%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 28 / storage = 247 B / avg = 8 B
-# current buf: size = 8162 B / used = 247 B / count = 28 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 30 / storage = 263 B / avg = 8 B
+# current buf: size = 8162 B / used = 263 B / count = 30 / avg = 8 B
 
-# strcache performance: lookups = 43 / hit rate = 34%
+# strcache performance: lookups = 70 / hit rate = 57%
 # hash-table stats:
-# Load=28/8192=0%, Rehash=0, Collisions=2/43=5%
-# Finished Make data base on Thu Oct 14 12:23:01 2021
+# Load=30/8192=0%, Rehash=0, Collisions=4/70=6%
+# Finished Make data base on Thu Oct 14 12:40:10 2021
 
  

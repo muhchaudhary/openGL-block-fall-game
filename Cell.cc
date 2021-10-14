@@ -6,7 +6,7 @@ Cell::Cell()
    blockType{'n'} 
 {}
 
-char Cell::getState() const { return blockType; }
+char Cell::getType() const { return blockType; }
 int Cell::getCoordX() const { return x; }
 int Cell::getCoordY() const { return y; }
 bool Cell::getBlind() {return blinded;}
@@ -25,7 +25,6 @@ void Cell::setId(int newid) {id = newid;}
 void Cell::setLev(int newLev) {level = newLev;}
 
 void Cell::draw(int offset){
-    int color = 0;
     int yOFFSET = 100;
     if (blinded) {
       return;
