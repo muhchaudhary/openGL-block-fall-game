@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Oct 14 01:16:49 2021
+# Make data base, printed on Thu Oct 14 12:23:01 2021
 
 # Variables
 
@@ -201,7 +201,7 @@ DESKTOP_SESSION = gnome
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = GNOME
 # makefile (from 'Makefile', line 3)
-OBJECTS = triangle.o GLwindow.o Cell.o
+OBJECTS = triangle.o GLwindow.o Cell.o 
 # 'override' directive
 GNUMAKEFLAGS := 
 # environment
@@ -283,9 +283,10 @@ LC_IDENTIFICATION = en_CA.UTF-8
 
 # Directories
 
-# . (device 65024, inode 8003940): 14 files, no impossibilities.
+ 
+# . (device 65024, inode 8003940): 18 files, no impossibilities.
 
-# 14 files, no impossibilities in 1 directories.
+# 18 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -298,21 +299,21 @@ Cell.d:
 #  Implicit rule search has been done.
 #  File does not exist.
 #  File has been updated.
- 
 #  Failed to be updated.
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2021-10-14 01:16:41.044321988
+#  Last modified 2021-10-14 12:22:50.881460433
 #  File has been updated.
 #  Successfully updated.
 
 clean:
+#  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
-#  Modification time never checked.
+#  File does not exist.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 11):
+#  recipe to execute (from 'Makefile', line 14):
 	rm ${DEPENDS} ${OBJECTS} ${EXEC}
 
 triangle: triangle.o GLwindow.o Cell.o
@@ -367,20 +368,25 @@ GLwindow.d:
 #  File has been updated.
 #  Failed to be updated.
 
+.PHONY: clean
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 # files hash-table stats:
-# Load=12/1024=1%, Rehash=0, Collisions=2/28=7%
+# Load=13/1024=1%, Rehash=0, Collisions=2/31=6%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 27 / storage = 240 B / avg = 8 B
-# current buf: size = 8162 B / used = 240 B / count = 27 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 28 / storage = 247 B / avg = 8 B
+# current buf: size = 8162 B / used = 247 B / count = 28 / avg = 8 B
 
-# strcache performance: lookups = 36 / hit rate = 25%
+# strcache performance: lookups = 43 / hit rate = 34%
 # hash-table stats:
-# Load=27/8192=0%, Rehash=0, Collisions=1/36=3%
-# Finished Make data base on Thu Oct 14 01:16:49 2021
+# Load=28/8192=0%, Rehash=0, Collisions=2/43=5%
+# Finished Make data base on Thu Oct 14 12:23:01 2021
 
  

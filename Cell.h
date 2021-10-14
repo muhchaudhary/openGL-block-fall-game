@@ -15,7 +15,7 @@ class Cell {
         Cell();  // Default constructor
 
         char getState() const; // Returns the value of isOn.
-        void setType(char t);          // Explicitly sets me to on.
+        void setType(char t,int id=0, int lev=0);          // Explicitly sets me to on.
         void setCoords(int r, int c);  // Tells me my row and column number.
         int getCoordX() const;
         int getCoordY() const;

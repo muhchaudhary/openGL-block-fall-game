@@ -12,31 +12,37 @@ std::vector<std::vector<Cell>> board;
 
 bool move_down = false;
 bool move_right = false;
+bool move_left = false;
+bool drop_down = false;
 bool player_moved = true;
 std::pair<int,int> currPoint = std::pair<int,int>(0,0);
 
 void process_Normal_Keys(int key, int x, int y)  {
      switch (key) {
        case 27 :      break;
-       case 100 : printf("GLUT_KEY_LEFT %d\n",key);   break;
-       case 102: move_right = true;  ;  break;
-       case 101   : printf("GLUT_KEY_UP %d\n",key);  ;  break;
+       case 100 : move_left = true;  ;  break;
+       case 102 : move_right= true;  ;  break;
+       case 101 : drop_down = true;  ;  break;
        case 103 : move_down = true;  ;  break;
     }
 }
 
 void key_movement(int now_runs) {
     if(move_down == true) {
-        //board[currPoint.second][currPoint.first].setType('n');
+        board[currPoint.second][currPoint.first].setType('n');
+        board[currPoint.second][currPoint.first].draw(50);
         currPoint.second+=1;
         board[currPoint.second][currPoint.first].setType('T');
+        board[currPoint.second][currPoint.first].draw(50);
         move_down = false;
         player_moved = true;
     }
     if(move_right == true) {
-        //board[currPoint.second][currPoint.first].setType('n');
+        board[currPoint.second][currPoint.first].setType('n');
+        board[currPoint.second][currPoint.first].draw(50);
         currPoint.first+=1;
         board[currPoint.second][currPoint.first].setType('T');
+        board[currPoint.second][currPoint.first].draw(50);
         move_right = false;
         player_moved = true;
     }
@@ -87,12 +93,11 @@ void drawFallingBlock(int value) {
         return;
     }
     if (currPoint.second+1 < numRows && currPoint.first +1 < numCols) {
-        //board[y][x].setType('n');
-        board[currPoint.second][currPoint.first].setType('T');
-        //drawCell(y,x,30,set_RGB(0,0,0),50);
-        //x +=1;
+        board[currPoint.second][currPoint.first].setType('n');
+        board[currPoint.second][currPoint.first].draw(50);
         currPoint.second +=1;
         board[currPoint.second][currPoint.first].setType('T');
+        board[currPoint.second][currPoint.first].draw(50);
         //drawCell(y,x,30,set_RGB(1,0.2,0.8),50);
         std::cout << "whats up " << value  << std::endl;
         glutTimerFunc(1000, drawFallingBlock, 0);

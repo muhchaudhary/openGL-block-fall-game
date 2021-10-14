@@ -14,7 +14,11 @@ int Cell::getId() {return id;}
 int Cell::getLev() {return level;}
 
 
-void Cell::setType(char t) {blockType = t;this->draw(50);}
+void Cell::setType(char t, int newId, int lev) {
+  blockType = t;
+  id = newId;
+  level = lev;
+}
 void Cell::setCoords(int x, int y) { this->x = x; this->y = y; this->draw(50);}
 void Cell::setBlind(bool blind) { blinded = blind; }
 void Cell::setId(int newid) {id = newid;}
