@@ -1,2 +1,2 @@
 # openGL-block-fall-game
-totally not copywrighted block fall game clone :)
+totally not copyrighted block fall game clone :)
