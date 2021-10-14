@@ -16,7 +16,7 @@ void drawCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
     int y1 = yOffset + 0 + y*width;
     int y2 = yOffset + width+ y*width;
     int x2 = xOffset + width+ x*width;
-    float border = 3.00;
+    float border = 2.50;
     glBegin(GL_POLYGON);
         glVertex2f(x1, y1);
         glVertex2f(x2, y1);

@@ -17,7 +17,7 @@ int id = -1;
 Point LowerLeft(std::vector<Point> blockPoints) {
     int minX = blockPoints[0].x;
     int maxY = blockPoints[0].y;;
-    for (int i = 0; i < (int)blockPoints.size()-1; i++) {
+    for (int i = 0; i < (int)blockPoints.size(); i++) {
         if (minX > blockPoints[i].x) minX = blockPoints[i].x;
         if (maxY < blockPoints[i].y) maxY = blockPoints[i].y;
     }
@@ -33,6 +33,23 @@ bool notMember(std::vector<Point> currLocc, int x, int y) {
     return true;
 }
 
+bool validBoundsRot(std::vector<Point> currLoc, 
+                    std::vector<Point> newPoints,
+                    std::vector<std::vector<Cell>>& grid) {
+    for (int i = 0; i < (int)currLoc.size(); i++) { // check each point
+        if (newPoints[i].x < 0 || newPoints[i].x > numCols - 1) {
+            return false;
+        }
+        if ((newPoints[i].y < 0 || newPoints[i].y > numRows - 1)) {
+            return false;
+        }
+        else if ((grid[newPoints[i].y][newPoints[i].x].getType() != 'n')
+                 && notMember(currLoc, newPoints[i].x, newPoints[i].y)) {
+            return false;
+        }
+    }
+    return true;
+}
 
 bool validBounds(std::vector<Point> currLoc, int x, int y, 
                  std::vector<std::vector<Cell>>& grid) {
@@ -77,25 +94,83 @@ bool shift(int x, int y,int offset,int level,
     }
 }
 
+bool rotate(int rotation, int offset, int level,
+            std::vector<Point>& blockPoints, 
+            std::vector<std::vector<Cell>>& grid) {
+    std::vector<Point> newPoints = {Point{0, 0}, Point{0, 0}, Point{0, 0}, Point{0, 0}};
+    Point lowerLeft = LowerLeft(blockPoints);
+    for (int i = 0; i < (int)blockPoints.size()-1;i++) {
+        int xNew = lowerLeft.x + (rotation * lowerLeft.y) - (rotation * blockPoints[i].y);
+        int yNew = lowerLeft.y - (rotation * lowerLeft.x) + (rotation * blockPoints[i].x);
+        newPoints[i].x = xNew;
+        newPoints[i].y = yNew;
+    }
+    Point newLowerLeft = LowerLeft(newPoints);
+    for(int i = 0; i < (int)blockPoints.size()-1; i++) {
+        newPoints[i].x += (lowerLeft.x - newLowerLeft.x);
+        newPoints[i].y += (lowerLeft.y - newLowerLeft.y);
+    }
+    if (validBoundsRot(blockPoints, newPoints,grid)) {
+        char blockType = grid[blockPoints[1].y][blockPoints[1].x].getType();
+        for (int i = 0; i < (int)blockPoints.size()-1; i++) {
+            grid[blockPoints[i].y][blockPoints[i].x].setType('n',-1, -1);
+            grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
+        }
+        for(int i = 0; i < (int)blockPoints.size()-1; i++) {
+            blockPoints[i].x = newPoints[i].x;
+            blockPoints[i].y = newPoints[i].y;
+            grid[blockPoints[i].y][blockPoints[i].x].setType(blockType,id,level);
+            grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
+        }   
+        blockPoints[4] = LowerLeft(blockPoints);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
 bool genBlocks(char blockType,int level, 
                std::vector<Point>& currBlockPoints,
                std::vector<std::vector<Cell>>& grid) {
     id++;
     bool dropped = true;
-    ;
     switch (blockType) {
         case 'T':
-            currBlockPoints = JblockPoints;
-            for (int i = 0; i <(int)currBlockPoints.size()-1; i++) { // check each point
-                grid[currBlockPoints[i].y][currBlockPoints[i].x].setId(id);
-                grid[currBlockPoints[i].y][currBlockPoints[i].x].setType('T');
-                //grid[currBlockPoints[i].y][currBlockPoints[i].x].draw(50);
-                if (grid[currBlockPoints[i].y][currBlockPoints[i].x].getType() != 'n') {
-                    dropped = false;
-                break;
-                }
-            }
+            currBlockPoints = TblockPoints;
             break;
+        case 'J':
+            currBlockPoints = JblockPoints;
+            break;
+        case 'L':
+            currBlockPoints = LblockPoints;
+            break;
+        case 'I':
+            currBlockPoints = IblockPoints;
+            break;
+        case 'Z':
+            currBlockPoints = ZblockPoints;
+            break;
+        case 'S':
+            currBlockPoints = SblockPoints;
+            break;
+        case 'O':
+            currBlockPoints = OblockPoints;
+            break;
+        case 'B':
+            currBlockPoints = IblockPoints;
+            break;
+    }
+    for (int i = 0; i <(int)currBlockPoints.size()-1; i++) { // check each point
+        grid[currBlockPoints[i].y][currBlockPoints[i].x].setId(id);
+        grid[currBlockPoints[i].y][currBlockPoints[i].x].setType(blockType);
+        grid[currBlockPoints[i].y][currBlockPoints[i].x].setLev(level);
+        //grid[currBlockPoints[i].y][currBlockPoints[i].x].draw(50);
+        if (grid[currBlockPoints[i].y][currBlockPoints[i].x].getType() != 'n') {
+            dropped = false;
+        break;
+        }
     }
     return dropped;
 }

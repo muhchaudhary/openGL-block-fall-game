@@ -20,4 +20,10 @@ bool shift(int x, int y,int offset,int level,
 bool genBlocks(char blockType,int level, 
                std::vector<Point>& currBlockPoints,
                std::vector<std::vector<Cell>>& grid);
+bool rotate(int rotation, int offset, int level,
+            std::vector<Point>& blockPoints, 
+            std::vector<std::vector<Cell>>& grid);
+bool validBoundsRot(std::vector<Point> currLoc, 
+                    std::vector<Point> newPoints,
+                    std::vector<std::vector<Cell>>& grid);
 #endif
