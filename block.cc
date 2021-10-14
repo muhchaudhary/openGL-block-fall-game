@@ -74,7 +74,6 @@ bool shift(int x, int y,int offset,int level,
     if (validBounds(blockPoints,x,y,grid)) {
         char blockType = grid[blockPoints[0].y][blockPoints[0].x].getType();
         for (int i = 0; i < (int)blockPoints.size()-1; i++) {
-            std::cout << blockPoints[i].y << " " << blockPoints[i].x << std::endl;
             grid[blockPoints[i].y][blockPoints[i].x].setType('n',-1, -1); // turn off
             grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
             blockPoints[i].x += x;

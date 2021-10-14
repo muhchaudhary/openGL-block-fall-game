@@ -20,6 +20,8 @@ bool move_right = false;
 bool move_left = false;
 bool drop_down = false;
 bool rotate_cc = false;
+bool rotate_ccw = false;
+
 bool player_moved = true;
 bool block_placed = false;
 
@@ -63,16 +65,18 @@ void process_Normal_Keys(int key, int x, int y)  {
        case 103 : move_down = true; ; ;  break;
        case 101 : drop_down = true; ; ;  break;
     }
-    std::cout << key << std::endl;
 }
 
 void char_keys(unsigned char key, int x, int y){
 	switch (key){
-		case 32:
+		case 32: // space
             drop_down = true;
 			break;
 		case 'r':
             rotate_cc = true; 
+		    break;
+        case 'w':
+            rotate_ccw = true; 
 		    break;
 
 		default:
@@ -103,7 +107,12 @@ void key_movement(int now_runs) {
         rotate(1,50,1,currBlockPoints,board);
         rotate_cc = false;
         player_moved = true;
+    } else if (rotate_ccw) {
+        rotate(-1,50,1,currBlockPoints,board);
+        rotate_ccw = false;
+        player_moved = true;
     }
+    
 
     if (block_placed) {
         checkClearRow(board);
@@ -123,9 +132,9 @@ void key_movement(int now_runs) {
 
 
 void display(){
-    glClearColor(0,0,0,0);
+    glClearColor(0.2,0.2,0.2,0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    RenderString(WIDTH/2-70, 25, GLUT_BITMAP_TIMES_ROMAN_24,"BLOCK FALL GAME");
+    RenderString(WIDTH/2-70, 25, GLUT_BITMAP_9_BY_15,"BLOCK FALL GAME");
     
     // draw grid for my player 
     // need to also add option for y offset
@@ -160,12 +169,12 @@ void drawFallingBlock(int value) {
     }
     if (player_moved == true) {
         player_moved = false;
-        glutTimerFunc(500, drawFallingBlock, 1);
+        glutTimerFunc(1000, drawFallingBlock, 1);
         return;
     }
     block_placed = !shift(0,1,50,1,currBlockPoints,board);
     glutSwapBuffers();
-    //glutPostRedisplay();
+    glutPostRedisplay();
     glutTimerFunc(1000, drawFallingBlock, 0);
 }
 
@@ -182,7 +191,7 @@ int main(int argc, char **argv)
     glutCreateWindow("Biquadris");
     glOrtho(0, WIDTH, HEIGHT, 0, -1, 1);
     glutDisplayFunc(display);
-    glutTimerFunc(500,drawFallingBlock,0);
+    glutTimerFunc(1000,drawFallingBlock,0);
     glutSpecialFunc( process_Normal_Keys );
     glutKeyboardFunc(char_keys);
     glutTimerFunc(0,key_movement,0);
