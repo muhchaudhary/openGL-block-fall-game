@@ -137,7 +137,7 @@ bool drop(int offset, int level,
     int yaxis = 1;
     int runtime = 0;
     while (validBounds(blockPoints, xaxis, yaxis,grid)) {
-        for (int i = 0; i < (int)blockPoints.size(); i++) {
+        for (int i = 0; i < (int)blockPoints.size()-1; i++) {
             char blockType = grid[blockPoints[1].y][blockPoints[1].x].getType();
             grid[blockPoints[i].y][blockPoints[i].x].setType('n',-1, -1); // turn off
             if(runtime == 0) { // only undraw once
@@ -145,21 +145,21 @@ bool drop(int offset, int level,
             }
             blockPoints[i].x += xaxis;
             blockPoints[i].y += yaxis;
-        for (int i = 0; i < (int)blockPoints.size(); i++) { 
+        for (int i = 0; i < (int)blockPoints.size()-1; i++) { 
             grid[blockPoints[i].y][blockPoints[i].x].setType(blockType,id,level);
             }
         }
         ++runtime;
     }
     int minY = blockPoints[0].y;;
-    for (int i = 0; i < (int)blockPoints.size(); i++) {
+    for (int i = 0; i < (int)blockPoints.size()-1; i++) {
         if (minY > blockPoints[i].y) minY = blockPoints[i].y;
     }
     if (minY < 3) {
         return false;
     }
     if (runtime != 0) { // no need to draw if nothing changed
-        for (int i = 0; i < (int)blockPoints.size(); i++) {
+        for (int i = 0; i < (int)blockPoints.size()-1; i++) {
             grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
         }
     }

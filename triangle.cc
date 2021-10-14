@@ -8,6 +8,7 @@
 #include <utility>
 #include "Cell.h"
 #include "block.h"
+#include <cstdlib>
 
 // global vars 
 std::vector<std::vector<Cell>> board;
@@ -21,6 +22,36 @@ bool drop_down = false;
 bool rotate_cc = false;
 bool player_moved = true;
 bool block_placed = false;
+
+char createBlock(){
+    int block_type = rand() % 6; // generate random number with values from 0 to 5 (p = 1/6)
+    char block = 0;
+    switch (block_type) {
+    case 0:
+        if(rand()%2 == 0) { // (p = 1/2), for each option we have p = 1/12
+            block = 'S'; // 1/6 chance of getting zero and 1 /2 chance of getting zero again  = 1/12
+        } else {
+            block = 'Z';
+        }
+        break;
+    case 1:
+        block = 'I';
+        break;
+    case 2:
+        block = 'T';
+        break;
+    case 3:
+        block = 'J';
+        break;
+    case 4:
+        block = 'O';
+        break;
+    case 5:
+        block = 'L';
+        break;
+    }
+    return block;
+}
 
 void process_Normal_Keys(int key, int x, int y)  {
      switch (key) {
@@ -60,7 +91,7 @@ void key_movement(int now_runs) {
     }
 
     if (block_placed) {
-        if (!genBlocks('L',1,currBlockPoints,board)){
+        if (!genBlocks(createBlock(),1,currBlockPoints,board)){
             exit(0);
         }
         block_placed = false;
@@ -129,6 +160,7 @@ void drawFallingBlock(int value) {
 // subject to change drastically
 int main(int argc, char **argv)
 {
+    srand (time(NULL));
     setDisp();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
