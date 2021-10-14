@@ -130,12 +130,47 @@ bool rotate(int rotation, int offset, int level,
     }
 }
 
+bool drop(int offset, int level,
+            std::vector<Point>& blockPoints, 
+            std::vector<std::vector<Cell>>& grid) {
+    int xaxis = 0;
+    int yaxis = 1;
+    int runtime = 0;
+    while (validBounds(blockPoints, xaxis, yaxis,grid)) {
+        for (int i = 0; i < (int)blockPoints.size(); i++) {
+            char blockType = grid[blockPoints[1].y][blockPoints[1].x].getType();
+            grid[blockPoints[i].y][blockPoints[i].x].setType('n',-1, -1); // turn off
+            if(runtime == 0) { // only undraw once
+                grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
+            }
+            blockPoints[i].x += xaxis;
+            blockPoints[i].y += yaxis;
+        for (int i = 0; i < (int)blockPoints.size(); i++) { 
+            grid[blockPoints[i].y][blockPoints[i].x].setType(blockType,id,level);
+            }
+        }
+        ++runtime;
+    }
+    int minY = blockPoints[0].y;;
+    for (int i = 0; i < (int)blockPoints.size(); i++) {
+        if (minY > blockPoints[i].y) minY = blockPoints[i].y;
+    }
+    if (minY < 3) {
+        return false;
+    }
+    if (runtime != 0) { // no need to draw if nothing changed
+        for (int i = 0; i < (int)blockPoints.size(); i++) {
+            grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
+        }
+    }
+    return true;
+}
+
 
 bool genBlocks(char blockType,int level, 
                std::vector<Point>& currBlockPoints,
                std::vector<std::vector<Cell>>& grid) {
     id++;
-    bool dropped = true;
     switch (blockType) {
         case 'T':
             currBlockPoints = TblockPoints;
@@ -163,14 +198,14 @@ bool genBlocks(char blockType,int level,
             break;
     }
     for (int i = 0; i <(int)currBlockPoints.size()-1; i++) { // check each point
+        if (grid[currBlockPoints[i].y][currBlockPoints[i].x].getType() != 'n') {
+        return false;
+        }
+    }
+    for (int i = 0; i <(int)currBlockPoints.size()-1; i++) { // check each point
         grid[currBlockPoints[i].y][currBlockPoints[i].x].setId(id);
         grid[currBlockPoints[i].y][currBlockPoints[i].x].setType(blockType);
         grid[currBlockPoints[i].y][currBlockPoints[i].x].setLev(level);
-        //grid[currBlockPoints[i].y][currBlockPoints[i].x].draw(50);
-        if (grid[currBlockPoints[i].y][currBlockPoints[i].x].getType() != 'n') {
-            dropped = false;
-        break;
-        }
     }
-    return dropped;
+    return true;
 }

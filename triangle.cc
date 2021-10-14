@@ -9,6 +9,7 @@
 #include "Cell.h"
 #include "block.h"
 
+// global vars 
 std::vector<std::vector<Cell>> board;
 std::vector<Point> currBlockPoints;
 std::vector<Point> nextBlockPoints;
@@ -19,7 +20,7 @@ bool move_left = false;
 bool drop_down = false;
 bool rotate_cc = false;
 bool player_moved = true;
-std::pair<int,int> currPoint = std::pair<int,int>(0,0);
+bool block_placed = false;
 
 void process_Normal_Keys(int key, int x, int y)  {
      switch (key) {
@@ -35,7 +36,7 @@ void process_Normal_Keys(int key, int x, int y)  {
 void key_movement(int now_runs) {
     player_moved = false;
     if(move_down) {
-        shift(0,1,50,1,currBlockPoints,board);
+        block_placed = !shift(0,1,50,1,currBlockPoints,board);
         move_down = false;
         player_moved = true;
     } else if(move_right) {
@@ -51,15 +52,25 @@ void key_movement(int now_runs) {
         drop_down = false;
         player_moved = true;
     } else if (rotate_cc) {
-        rotate(1,50,1,currBlockPoints,board);
+        //rotate(1,50,1,currBlockPoints,board);
+        drop(50,1,currBlockPoints,board);
+        block_placed = true;
         rotate_cc = false;
         player_moved = true;
     }
-    if (player_moved) {
+
+    if (block_placed) {
+        if (!genBlocks('L',1,currBlockPoints,board)){
+            exit(0);
+        }
+        block_placed = false;
+        glutSwapBuffers();
+        glutPostRedisplay();
+
+    }else if (player_moved) { //redraw only if play moves
         glutSwapBuffers();
         glutPostRedisplay();
     }
-    //glFlush();
     glutTimerFunc(0, key_movement, now_runs);
 }
 
