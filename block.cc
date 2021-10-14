@@ -166,6 +166,57 @@ bool drop(int offset, int level,
     return true;
 }
 
+bool checkRow(int i,std::vector<std::vector<Cell>>& grid) {
+    for (int j = 0; j < 11; ++j) {
+        if (grid[i][j].getType() == 'n') {
+            return false;
+        }
+    }
+    return true;
+}
+
+void clearRow(int i, std::vector<std::vector<Cell>>& grid) {
+    for (int j = i; j != 0; --j) {
+        if (j == i) {
+            for (int i = 0; i < (int)grid[j].size();i++) {
+                //blocks[blocks.find(grid[j][i].getId())->first] -= 1; // cell is removed
+                //if (blocks[blocks.find(grid[j][i].getId())->first] == 0) {
+                //    score += (grid[j][i].getLev() + 1) * (grid[j][i].getLev() + 1);
+                //}
+                grid[j][i].setType('n',-1,-1);
+            }
+            grid[j].clear();
+        }
+        grid[j] = grid[j-1];
+        for (int i = 0; i < (int)grid[j].size();i++) {
+            int x = grid[j][i].getCoordX();
+            int y = grid[j][i].getCoordY();
+            char tmpType = grid[j][i].getType();
+            grid[j][i].setType('n',grid[j][i].getId(),grid[j][i].getLev());
+            grid[j][i].setCoords(x+1,y);
+            grid[j][i].setType(tmpType,grid[j][i].getId(),grid[j][i].getLev());
+        }
+    }
+    for (int k = 0; k < 11; ++k) {
+        grid[0][k].setType('n',-1,-1);
+    }
+}
+
+bool checkClearRow(std::vector<std::vector<Cell>>& grid) {
+    int clearedRows = 0;
+    bool clear = false;
+    for (int i = 0; i < numRows; ++i) {
+        if (checkRow(i,grid)) {
+            clear = true;
+            clearedRows += 1;
+            clearRow(i,grid);
+            i -= 1; // want to check new row at i since row would be moved down
+        }
+    }
+
+    return clear;
+}
+
 
 bool genBlocks(char blockType,int level, 
                std::vector<Point>& currBlockPoints,

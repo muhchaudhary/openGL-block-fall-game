@@ -23,6 +23,7 @@ bool rotate_cc = false;
 bool player_moved = true;
 bool block_placed = false;
 
+// basic block creator using rand()
 char createBlock(){
     int block_type = rand() % 6; // generate random number with values from 0 to 5 (p = 1/6)
     char block = 0;
@@ -91,6 +92,7 @@ void key_movement(int now_runs) {
     }
 
     if (block_placed) {
+        checkClearRow(board);
         if (!genBlocks(createBlock(),1,currBlockPoints,board)){
             exit(0);
         }
@@ -122,6 +124,7 @@ void display(){
     glFlush();
 }
 
+// set up first time disp
 void setDisp() {
     for (int i = 0; i < numRows; i++) {
         std::vector<Cell> row;
@@ -133,15 +136,11 @@ void setDisp() {
     }
 }
 
-void genBB() {
-    genBlocks('L',1,currBlockPoints,board);
-}
-
 bool draw_block = true;
 //get timing working first WORKs, now need to reset once player makes move
 void drawFallingBlock(int value) {
     if (draw_block) {
-        genBB();
+        genBlocks(createBlock(),1,currBlockPoints,board);
         shift(0,0,50,1,currBlockPoints,board);
         draw_block = false;        
     }

@@ -29,4 +29,5 @@ bool validBoundsRot(std::vector<Point> currLoc,
 bool drop(int offset, int level,
             std::vector<Point>& blockPoints, 
             std::vector<std::vector<Cell>>& grid);
+bool checkClearRow(std::vector<std::vector<Cell>>& grid);
 #endif

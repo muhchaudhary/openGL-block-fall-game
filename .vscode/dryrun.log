@@ -1,5 +1,7 @@
 make --dry-run --keep-going --print-directory
 make: Entering directory '/home/muhammad/Documents/github-stuff/openGL-block-fall-game'
-make: 'triangle' is up to date.
+g++ -Wall -MMD -lglut -lGLU -lGL    -c -o triangle.o triangle.cc
+ 
+g++ -Wall -MMD -lglut -lGLU -lGL  triangle.o GLwindow.o Cell.o block.o -o triangle
 make: Leaving directory '/home/muhammad/Documents/github-stuff/openGL-block-fall-game'
  
