@@ -19,7 +19,7 @@ class RGB {
 };
 
 //draws a cell with borders
-void drawCell(int y, int x, int width, RGB rgb, int xOffset = 0);
+void drawCell(int y, int x, int width, RGB rgb, int xOffset = 0, int yOffset = 0);
 //simple string renderer
 void RenderString(float x, float y, void *font, const char* string);
 //draws a simple rectangle

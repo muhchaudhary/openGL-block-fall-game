@@ -1,0 +1,9 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory '/home/muhammad/Documents/github-stuff/openGL-block-fall-game'
+g++ -lglut -lGLU -lGL    -c -o triangle.o triangle.cc
+g++ -lglut -lGLU -lGL    -c -o GLwindow.o GLwindow.cc
+ 
+g++ -lglut -lGLU -lGL    -c -o Cell.o Cell.cc
+g++ -lglut -lGLU -lGL  triangle.o GLwindow.o Cell.o -o triangle
+make: Leaving directory '/home/muhammad/Documents/github-stuff/openGL-block-fall-game'
+ 

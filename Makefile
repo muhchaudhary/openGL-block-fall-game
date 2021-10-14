@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -lglut -lGLU -lGL 
-OBJECTS = triangle.o GLwindow.o glView.o
+OBJECTS = triangle.o GLwindow.o Cell.o
 DEPENDS = ${OBJECTS:.o=.d}
 EXEC = triangle
 

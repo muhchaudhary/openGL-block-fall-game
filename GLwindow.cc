@@ -10,11 +10,11 @@ RGB set_RGB(float r, float g, float b) {
     return rgb;
 }
 
-void drawCell(int y, int x, int width, RGB rgb, int xOffset) {
+void drawCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
     glColor3f(1,1,1);
     int x1 = xOffset + 0 + x*width;
-    int y1 = 0 + y*width;
-    int y2 = width+ y*width;
+    int y1 = yOffset + 0 + y*width;
+    int y2 = yOffset + width+ y*width;
     int x2 = xOffset + width+ x*width;
     float border = 3.00;
     glBegin(GL_POLYGON);
@@ -32,6 +32,7 @@ void drawCell(int y, int x, int width, RGB rgb, int xOffset) {
         glVertex2f(x2-border, y2-border);
         glVertex2f(x1+border, y2-border);
     glEnd();
+    glFlush();
 }
 
 void RenderString(float x, float y, void *font, const char* string) {  
