@@ -56,13 +56,28 @@ char createBlock(){
 
 void process_Normal_Keys(int key, int x, int y)  {
      switch (key) {
-       case 27 :      break;
+       case 27  : exit(0);     break;
        case 100 : move_left = true; ; ;  break;
        case 102 : move_right= true; ; ;  break;
        case 999 : drop_down = true; ; ;  break;
        case 103 : move_down = true; ; ;  break;
-       case 101 : rotate_cc = true; ; ;  break;
+       case 101 : drop_down = true; ; ;  break;
     }
+    std::cout << key << std::endl;
+}
+
+void char_keys(unsigned char key, int x, int y){
+	switch (key){
+		case 32:
+            drop_down = true;
+			break;
+		case 'r':
+            rotate_cc = true; 
+		    break;
+
+		default:
+         break;
+	} 
 }
 
 void key_movement(int now_runs) {
@@ -80,13 +95,12 @@ void key_movement(int now_runs) {
         move_left = false;
         player_moved = true;
     } else if (drop_down) {
-        shift(0,-1,50,1,currBlockPoints,board);
+        drop(50,1,currBlockPoints,board);
+        block_placed = true;
         drop_down = false;
         player_moved = true;
     } else if (rotate_cc) {
-        //rotate(1,50,1,currBlockPoints,board);
-        drop(50,1,currBlockPoints,board);
-        block_placed = true;
+        rotate(1,50,1,currBlockPoints,board);
         rotate_cc = false;
         player_moved = true;
     }
@@ -149,7 +163,7 @@ void drawFallingBlock(int value) {
         glutTimerFunc(500, drawFallingBlock, 1);
         return;
     }
-    shift(0,1,50,1,currBlockPoints,board);
+    block_placed = !shift(0,1,50,1,currBlockPoints,board);
     glutSwapBuffers();
     //glutPostRedisplay();
     glutTimerFunc(1000, drawFallingBlock, 0);
@@ -170,6 +184,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(display);
     glutTimerFunc(500,drawFallingBlock,0);
     glutSpecialFunc( process_Normal_Keys );
+    glutKeyboardFunc(char_keys);
     glutTimerFunc(0,key_movement,0);
     glutMainLoop();
     return 0;
