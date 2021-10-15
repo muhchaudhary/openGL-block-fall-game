@@ -9,12 +9,15 @@
 #include "Cell.h"
 #include "block.h"
 #include <cstdlib>
-
+#include <string>
 // global vars 
 std::vector<std::vector<Cell>> board;
 std::vector<Point> currBlockPoints;
 std::vector<Point> nextBlockPoints;
+char nextBlock;
+char currBlock;
 
+int offset = 100;
 bool move_down = false;
 bool move_right = false;
 bool move_left = false;
@@ -24,7 +27,8 @@ bool rotate_ccw = false;
 
 bool player_moved = true;
 bool block_placed = false;
-
+int rowsCleared = 0;
+int fallSpeed = 1000;
 
 double calculate_frames(int frames) {
     std::cout << 1/(double)frames * 1000 <<" ms" << std::endl;
@@ -100,45 +104,47 @@ void fps(int frames) {
 void key_movement(int now_runs) {
     player_moved = false;
     if(move_down) {
-        block_placed = !shift(0,1,50,1,currBlockPoints,board);
+        block_placed = !shift(0,1,offset,1,currBlockPoints,board);
         move_down = false;
         player_moved = true;
     } else if(move_right) {
-        shift(1,0,50,1,currBlockPoints,board);
+        shift(1,0,offset,1,currBlockPoints,board);
         move_right = false;
         player_moved = true;
     } else if (move_left) {
-        shift(-1,0,50,1,currBlockPoints,board);
+        shift(-1,0,offset,1,currBlockPoints,board);
         move_left = false;
         player_moved = true;
     } else if (drop_down) {
-        drop(50,1,currBlockPoints,board);
+        drop(offset,1,currBlockPoints,board);
         block_placed = true;
         drop_down = false;
         player_moved = true;
     } else if (rotate_cc) {
-        rotate(1,50,1,currBlockPoints,board);
+        rotate(1,offset,1,currBlockPoints,board);
         rotate_cc = false;
         player_moved = true;
     } else if (rotate_ccw) {
-        rotate(-1,50,1,currBlockPoints,board);
+        rotate(-1,offset,1,currBlockPoints,board);
         rotate_ccw = false;
         player_moved = true;
     }
     
 
     if (block_placed) {
-        checkClearRow(board);
-        if (!genBlocks(createBlock(),1,currBlockPoints,board)){
+        rowsCleared += checkClearRow(board);
+        currBlock = nextBlock;
+        nextBlock = createBlock();
+        if (!genBlocks(currBlock,1,currBlockPoints,board)){
             exit(0);
         }
         block_placed = false;
         //glutSwapBuffers();
         //glutPostRedisplay();
 
-    }else if (player_moved) { //redraw only if play moves
-        //glutSwapBuffers();
-        //glutPostRedisplay();
+    } 
+    if (rowsCleared > 3) {
+        fallSpeed = 250;
     }
     glutTimerFunc(0, key_movement, now_runs);
 }
@@ -148,13 +154,15 @@ void display(){
     glClearColor(0.2,0.2,0.2,0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     RenderString(WIDTH/2-70, 25, GLUT_BITMAP_9_BY_15,"BLOCK FALL GAME");
-    
+    char * Score = "Score: ";
+    RenderString(500,200,GLUT_BITMAP_8_BY_13,(Score + std::to_string(rowsCleared)).c_str());
+    drawPreview(nextBlock,20,500);
     // draw grid for my player 
     // need to also add option for y offset
     // this is just a test to see if graphics are working proper
     for (int i = 0; i < numRows; i++) {
         for(int j = 0; j < numCols;j++) {
-            board[i][j].draw(50);
+            board[i][j].draw(offset);
         }
     }
     glFlush();
@@ -176,25 +184,28 @@ bool draw_block = true;
 //get timing working first WORKs, now need to reset once player makes move
 void drawFallingBlock(int value) {
     if (draw_block) {
-        genBlocks(createBlock(),1,currBlockPoints,board);
-        shift(0,0,50,1,currBlockPoints,board);
-        draw_block = false;        
+        currBlock = createBlock();
+        nextBlock = createBlock();
+        genBlocks(currBlock,1,currBlockPoints,board);
+        shift(0,0,offset,1,currBlockPoints,board);    
+        draw_block = false;    
     }
     if (player_moved == true) {
         player_moved = false;
-        glutTimerFunc(1000, drawFallingBlock, 1);
+        glutTimerFunc(value, drawFallingBlock, value);
         return;
     }
-    block_placed = !shift(0,1,50,1,currBlockPoints,board);
+    if (!draw_block) {
+        block_placed = !shift(0,1,offset,1,currBlockPoints,board);
+    }
     //glutSwapBuffers();
     //glutPostRedisplay();
-    glutTimerFunc(1000, drawFallingBlock, 0);
+    glutTimerFunc(fallSpeed, drawFallingBlock, fallSpeed);
 }
 
 
 // subject to change drastically
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     srand (time(NULL));
     setDisp();
     glutInit(&argc, argv);
@@ -204,8 +215,8 @@ int main(int argc, char **argv)
     glutCreateWindow("Biquadris");
     glOrtho(0, WIDTH, HEIGHT, 0.2, -1, 1);
     glutDisplayFunc(display);
-    glutTimerFunc(0,fps,calculate_frames(120));
-    glutTimerFunc(1000,drawFallingBlock,0);
+    glutTimerFunc(0,fps,calculate_frames(60));
+    glutTimerFunc(0,drawFallingBlock,fallSpeed);
     glutSpecialFunc( process_Normal_Keys );
     glutKeyboardFunc(char_keys);
     glutTimerFunc(0,key_movement,0);

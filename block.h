@@ -20,6 +20,7 @@ bool shift(int x, int y,int offset,int level,
 bool genBlocks(char blockType,int level, 
                std::vector<Point>& currBlockPoints,
                std::vector<std::vector<Cell>>& grid);
+void drawPreview(char next, int offset, int yoffset);
 bool rotate(int rotation, int offset, int level,
             std::vector<Point>& blockPoints, 
             std::vector<std::vector<Cell>>& grid);
@@ -29,5 +30,5 @@ bool validBoundsRot(std::vector<Point> currLoc,
 bool drop(int offset, int level,
             std::vector<Point>& blockPoints, 
             std::vector<std::vector<Cell>>& grid);
-bool checkClearRow(std::vector<std::vector<Cell>>& grid);
+int checkClearRow(std::vector<std::vector<Cell>>& grid);
 #endif

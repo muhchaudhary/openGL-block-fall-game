@@ -1,6 +1,6 @@
 #include <vector>
 #include "block.h"
-#include "Cell.h"
+
 std::vector<Point> TblockPoints = {Point{1,3}, Point{0,2}, Point{1,2}, Point{2,2}, Point{0,3}};
 std::vector<Point> IblockPoints = {Point{0, 3}, Point{1, 3}, Point{2, 3}, Point{3, 3},Point{0,3}};
 std::vector<Point> ZblockPoints = {Point{0, 2}, Point{1, 2}, Point{1, 3}, Point{2, 3},Point {0,3}};
@@ -201,19 +201,17 @@ void clearRow(int i, std::vector<std::vector<Cell>>& grid) {
     }
 }
 
-bool checkClearRow(std::vector<std::vector<Cell>>& grid) {
+int checkClearRow(std::vector<std::vector<Cell>>& grid) {
     int clearedRows = 0;
-    bool clear = false;
     for (int i = 0; i < numRows; ++i) {
         if (checkRow(i,grid)) {
-            clear = true;
             clearedRows += 1;
             clearRow(i,grid);
             i -= 1; // want to check new row at i since row would be moved down
         }
     }
 
-    return clear;
+    return clearedRows;
 }
 
 
@@ -258,4 +256,45 @@ bool genBlocks(char blockType,int level,
         grid[currBlockPoints[i].y][currBlockPoints[i].x].setLev(level);
     }
     return true;
+}
+
+// very stupid way of doing this
+void drawPreview(char next, int offset, int yoffset) {
+    //drawCell(yoffset-15,offset-15,150);
+    if (next == 'T') {
+        drawCell(1,0,30,set_RGB(0.666, 0.086, 0.035),yoffset,offset);
+        drawCell(2,1,30,set_RGB(0.666, 0.086, 0.035),yoffset,offset);
+        drawCell(1,1,30,set_RGB(0.666, 0.086, 0.035),yoffset,offset);
+        drawCell(1,2,30,set_RGB(0.666, 0.086, 0.035),yoffset,offset);
+    } else if (next == 'I') {
+        drawCell(3,0,30,set_RGB(0.082, 0.082, 0.6),yoffset,offset);
+        drawCell(3,1,30,set_RGB(0.082, 0.082, 0.6),yoffset,offset);
+        drawCell(3,2,30,set_RGB(0.082, 0.082, 0.6),yoffset,offset);
+        drawCell(3,3,30,set_RGB(0.082, 0.082, 0.6),yoffset,offset);
+    } else if (next == 'Z') {
+        drawCell(2,0,30,set_RGB(0.301, 0.501, 0),yoffset,offset);
+        drawCell(2,1,30,set_RGB(0.301, 0.501, 0),yoffset,offset);
+        drawCell(3,1,30,set_RGB(0.301, 0.501, 0),yoffset,offset);
+        drawCell(3,2,30,set_RGB(0.301, 0.501, 0),yoffset,offset);
+    } else if (next == 'S') {
+        drawCell(3,0,30,set_RGB(0.2,0.5,0.2),yoffset,offset);
+        drawCell(3,1,30,set_RGB(0.2,0.5,0.2),yoffset,offset);
+        drawCell(2,1,30,set_RGB(0.2,0.5,0.2),yoffset,offset);
+        drawCell(2,2,30,set_RGB(0.2,0.5,0.2),yoffset,offset);
+    } else if (next == 'L') {
+        drawCell(3,0,30,set_RGB(0.501, 0.2, 0.501),yoffset,offset);
+        drawCell(3,1,30,set_RGB(0.501, 0.2, 0.501),yoffset,offset);
+        drawCell(3,2,30,set_RGB(0.501, 0.2, 0.501),yoffset,offset);
+        drawCell(2,2,30,set_RGB(0.501, 0.2, 0.501),yoffset,offset);
+    } else if (next == 'O') {
+        drawCell(2,0,30,set_RGB(0, 0.501, 0),yoffset,offset);
+        drawCell(3,0,30,set_RGB(0, 0.501, 0),yoffset,offset);
+        drawCell(2,1,30,set_RGB(0, 0.501, 0),yoffset,offset);
+        drawCell(3,1,30,set_RGB(0, 0.501, 0),yoffset,offset);
+    } else if (next == 'J') {
+        drawCell(2,0,30,set_RGB(0.501, 0, 0),yoffset,offset);
+        drawCell(3,0,30,set_RGB(0.501, 0, 0),yoffset,offset);
+        drawCell(3,1,30,set_RGB(0.501, 0, 0),yoffset,offset);
+        drawCell(3,2,30,set_RGB(0.501, 0, 0),yoffset,offset);
+    }
 }
