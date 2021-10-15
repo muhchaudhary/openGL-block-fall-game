@@ -25,6 +25,12 @@ bool rotate_ccw = false;
 bool player_moved = true;
 bool block_placed = false;
 
+
+double calculate_frames(int frames) {
+    std::cout << 1/(double)frames * 1000 <<" ms" << std::endl;
+    return 1/(double)frames * 1000;
+}
+
 // basic block creator using rand()
 char createBlock(){
     int block_type = rand() % 6; // generate random number with values from 0 to 5 (p = 1/6)
@@ -198,7 +204,7 @@ int main(int argc, char **argv)
     glutCreateWindow("Biquadris");
     glOrtho(0, WIDTH, HEIGHT, 0.2, -1, 1);
     glutDisplayFunc(display);
-    glutTimerFunc(0,fps,16.6667);
+    glutTimerFunc(0,fps,calculate_frames(120));
     glutTimerFunc(1000,drawFallingBlock,0);
     glutSpecialFunc( process_Normal_Keys );
     glutKeyboardFunc(char_keys);
