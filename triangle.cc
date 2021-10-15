@@ -84,6 +84,13 @@ void char_keys(unsigned char key, int x, int y){
 	} 
 }
 
+void fps(int frames) {
+    // 60 fps = 16.6666667
+    glutSwapBuffers();
+    glutPostRedisplay();
+    glutTimerFunc(frames, fps, frames);
+}
+
 void key_movement(int now_runs) {
     player_moved = false;
     if(move_down) {
@@ -120,12 +127,12 @@ void key_movement(int now_runs) {
             exit(0);
         }
         block_placed = false;
-        glutSwapBuffers();
-        glutPostRedisplay();
+        //glutSwapBuffers();
+        //glutPostRedisplay();
 
     }else if (player_moved) { //redraw only if play moves
-        glutSwapBuffers();
-        glutPostRedisplay();
+        //glutSwapBuffers();
+        //glutPostRedisplay();
     }
     glutTimerFunc(0, key_movement, now_runs);
 }
@@ -173,8 +180,8 @@ void drawFallingBlock(int value) {
         return;
     }
     block_placed = !shift(0,1,50,1,currBlockPoints,board);
-    glutSwapBuffers();
-    glutPostRedisplay();
+    //glutSwapBuffers();
+    //glutPostRedisplay();
     glutTimerFunc(1000, drawFallingBlock, 0);
 }
 
@@ -189,8 +196,9 @@ int main(int argc, char **argv)
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0, 0);
     glutCreateWindow("Biquadris");
-    glOrtho(0, WIDTH, HEIGHT, 0, -1, 1);
+    glOrtho(0, WIDTH, HEIGHT, 0.2, -1, 1);
     glutDisplayFunc(display);
+    glutTimerFunc(0,fps,16.6667);
     glutTimerFunc(1000,drawFallingBlock,0);
     glutSpecialFunc( process_Normal_Keys );
     glutKeyboardFunc(char_keys);
