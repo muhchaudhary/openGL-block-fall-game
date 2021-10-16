@@ -314,7 +314,6 @@ bool drawPreviewDrop(int offset, int level,
     //}
     while (validBounds(blockPoints, xaxis, yaxis,grid)) {
         for (int i = 0; i < (int)blockPoints.size()-1; i++) {
-            char blockType = grid[blockPoints[1].y][blockPoints[1].x].getType();
             //grid[blockPoints[i].y][blockPoints[i].x].setType('n',-1, -1); // turn off
             if(runtime == 0) { // only undraw once
                 grid[blockPoints[i].y][blockPoints[i].x].draw(offset);

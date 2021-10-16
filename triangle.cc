@@ -159,8 +159,7 @@ void display(){
     glClearColor(0.039, 0.145, 0.239,0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     RenderString(WIDTH/2-70, 25, GLUT_BITMAP_9_BY_15,"BLOCK FALL GAME");
-    char * Score = "Score: ";
-    RenderString(500,200,GLUT_BITMAP_8_BY_13,(Score + std::to_string(rowsCleared)).c_str());
+    RenderString(500,200,GLUT_BITMAP_8_BY_13,("Score: " + std::to_string(rowsCleared)).c_str());
     drawPreview(nextBlock,20,500);
     // draw grid for my player 
     // need to also add option for y offset

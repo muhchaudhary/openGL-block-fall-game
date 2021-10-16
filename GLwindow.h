@@ -3,11 +3,11 @@
 #include "GL/freeglut.h"
 #include "GL/gl.h"
 
-const int WIDTH = 900;
-const int HEIGHT = 750;
+#define  WIDTH  900
+#define  HEIGHT  750
 
-const int numRows = 18;
-const int numCols = 11;
+#define numRows  18
+#define numCols  11
 
 
 // simple class to hold my rgb values for each block
