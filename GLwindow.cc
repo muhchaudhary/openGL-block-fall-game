@@ -11,7 +11,7 @@ RGB set_RGB(float r, float g, float b) {
 }
 
 void drawCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
-    float border = 2;
+    float border = 1.2;
     glColor3f(0.898, 0.847, 0.843);
     int x1 = xOffset + 0 + x*width;
     int y1 = yOffset + 0 + y*width;

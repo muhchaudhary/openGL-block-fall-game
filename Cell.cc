@@ -65,6 +65,9 @@ void Cell::draw(int offset){
       case 'B':
         drawCell(x,y,30,set_RGB(0.525, 0.101, 0.301),offset,yOFFSET);
         break; // forgot this
+      case 'p':
+        drawCell(x,y,30,set_RGB(0.250, 0.270, 0.290),offset,yOFFSET);
+        break; // forgot this
       default:
         drawCell(x,y,30,set_RGB(0,0,0),offset,yOFFSET);
         break;

@@ -1,8 +1,8 @@
 #include <vector>
 #include "block.h"
 
-std::vector<Point> TblockPoints = {Point{1,3}, Point{0,2}, Point{1,2}, Point{2,2}, Point{0,3}};
-std::vector<Point> IblockPoints = {Point{0, 3}, Point{1, 3}, Point{2, 3}, Point{3, 3},Point{0,3}};
+std::vector<Point> TblockPoints = {Point{1, 3}, Point{0, 2}, Point{1, 2}, Point{2, 2},Point {0,3}};
+std::vector<Point> IblockPoints = {Point{0, 3}, Point{1, 3}, Point{2, 3}, Point{3, 3},Point {0,3}};
 std::vector<Point> ZblockPoints = {Point{0, 2}, Point{1, 2}, Point{1, 3}, Point{2, 3},Point {0,3}};
 std::vector<Point> SblockPoints = {Point{0, 3}, Point{1, 3}, Point{1, 2}, Point{2, 2},Point {0,3}};
 std::vector<Point> LblockPoints = {Point{0, 3}, Point{1, 3}, Point{2, 3}, Point{2, 2},Point {0,3}};
@@ -60,8 +60,11 @@ bool validBounds(std::vector<Point> currLoc, int x, int y,
         if ((currLoc[i].y + y < 0 || currLoc[i].y + y > numRows - 1)) {
             return false;
         }
-        else if ((grid[currLoc[i].y + y][currLoc[i].x + x].getType() != 'n')
-                 && notMember(currLoc, currLoc[i].x + x, currLoc[i].y + y)) {
+        else if ((grid[currLoc[i].y + y][currLoc[i].x + x].getType() != 'n') 
+                    && notMember(currLoc, currLoc[i].x + x, currLoc[i].y + y)) {
+            if ((grid[currLoc[i].y + y][currLoc[i].x + x].getType() == 'p')) {
+                return true;
+            }
             return false;
         }
     }
@@ -144,8 +147,8 @@ bool drop(int offset, int level,
             }
             blockPoints[i].x += xaxis;
             blockPoints[i].y += yaxis;
-        for (int i = 0; i < (int)blockPoints.size()-1; i++) { 
-            grid[blockPoints[i].y][blockPoints[i].x].setType(blockType,id,level);
+        for (int j = 0; j < (int)blockPoints.size()-1; j++) { 
+            grid[blockPoints[j].y][blockPoints[j].x].setType(blockType,id,level);
             }
         }
         ++runtime;
@@ -297,4 +300,46 @@ void drawPreview(char next, int offset, int yoffset) {
         drawCell(3,1,30,set_RGB(0.501, 0, 0),yoffset,offset);
         drawCell(3,2,30,set_RGB(0.501, 0, 0),yoffset,offset);
     }
+}
+
+
+bool drawPreviewDrop(int offset, int level,
+            std::vector<Point> blockPoints, 
+            std::vector<std::vector<Cell>> grid) {
+    int xaxis = 0;
+    int yaxis = 1;
+    int runtime = 0;
+    //if (!shift(0,1,offset,1,blockPoints,grid)) {
+    //    return false;
+    //}
+    while (validBounds(blockPoints, xaxis, yaxis,grid)) {
+        for (int i = 0; i < (int)blockPoints.size()-1; i++) {
+            char blockType = grid[blockPoints[1].y][blockPoints[1].x].getType();
+            //grid[blockPoints[i].y][blockPoints[i].x].setType('n',-1, -1); // turn off
+            if(runtime == 0) { // only undraw once
+                grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
+            }
+            blockPoints[i].x += xaxis;
+            blockPoints[i].y += yaxis;
+        if (runtime > 1) {
+            for (int j = 0; j < (int)blockPoints.size()-1; j++) {
+                grid[blockPoints[j].y][blockPoints[j].x].setType('p',id,level);
+                }
+            }
+        }
+        ++runtime;
+    }
+    int minY = blockPoints[0].y;;
+    for (int i = 0; i < (int)blockPoints.size()-1; i++) {
+        if (minY > blockPoints[i].y) minY = blockPoints[i].y;
+    }
+    if (minY < 3) {
+        return false;
+    }
+    if (runtime != 0) { // no need to draw if nothing changed
+        for (int i = 0; i < (int)blockPoints.size()-1; i++) {
+            grid[blockPoints[i].y][blockPoints[i].x].draw(offset);
+        }
+    }
+    return true;
 }

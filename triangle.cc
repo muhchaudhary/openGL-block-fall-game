@@ -10,6 +10,8 @@
 #include "block.h"
 #include <cstdlib>
 #include <string>
+#include <stdlib.h>
+#include <time.h>
 // global vars 
 std::vector<std::vector<Cell>> board;
 std::vector<Point> currBlockPoints;
@@ -37,11 +39,11 @@ double calculate_frames(int frames) {
 
 // basic block creator using rand()
 char createBlock(){
-    int block_type = rand() % 6; // generate random number with values from 0 to 5 (p = 1/6)
+    int block_type = random() % 6; // generate random number with values from 0 to 5 (p = 1/6)
     char block = 0;
     switch (block_type) {
     case 0:
-        if(rand()%2 == 0) { // (p = 1/2), for each option we have p = 1/12
+        if(random()%2 == 0) { // (p = 1/2), for each option we have p = 1/12
             block = 'S'; // 1/6 chance of getting zero and 1 /2 chance of getting zero again  = 1/12
         } else {
             block = 'Z';
@@ -88,7 +90,8 @@ void char_keys(unsigned char key, int x, int y){
         case 'w':
             rotate_ccw = true; 
 		    break;
-
+        case 'p':
+            exit(0);
 		default:
          break;
 	} 
@@ -100,6 +103,7 @@ void fps(int frames) {
     glutPostRedisplay();
     glutTimerFunc(frames, fps, frames);
 }
+
 
 void key_movement(int now_runs) {
     player_moved = false;
@@ -130,12 +134,12 @@ void key_movement(int now_runs) {
         player_moved = true;
     }
     
-
     if (block_placed) {
         rowsCleared += checkClearRow(board);
         currBlock = nextBlock;
         nextBlock = createBlock();
-        if (!genBlocks(currBlock,1,currBlockPoints,board)){
+        genBlocks(currBlock,1,currBlockPoints,board);
+        if (!shift(4,0,offset,1,currBlockPoints,board)){
             exit(0);
         }
         block_placed = false;
@@ -146,12 +150,13 @@ void key_movement(int now_runs) {
     if (rowsCleared > 3) {
         fallSpeed = 250;
     }
-    glutTimerFunc(0, key_movement, now_runs);
+    drawPreviewDrop(offset,1,currBlockPoints,board);
+    glutTimerFunc(now_runs, key_movement, now_runs);
 }
 
 
 void display(){
-    glClearColor(0.2,0.2,0.2,0);
+    glClearColor(0.039, 0.145, 0.239,0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     RenderString(WIDTH/2-70, 25, GLUT_BITMAP_9_BY_15,"BLOCK FALL GAME");
     char * Score = "Score: ";
@@ -187,7 +192,7 @@ void drawFallingBlock(int value) {
         currBlock = createBlock();
         nextBlock = createBlock();
         genBlocks(currBlock,1,currBlockPoints,board);
-        shift(0,0,offset,1,currBlockPoints,board);    
+        shift(4,0,offset,1,currBlockPoints,board);    
         draw_block = false;    
     }
     if (player_moved == true) {
@@ -206,7 +211,11 @@ void drawFallingBlock(int value) {
 
 // subject to change drastically
 int main(int argc, char **argv) {
-    srand (time(NULL));
+   struct timespec ts;
+    if (timespec_get(&ts, TIME_UTC) == 0) {
+        exit(1);
+    }
+    srandom(ts.tv_nsec ^ ts.tv_sec);  /* Seed the PRNG */
     setDisp();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
@@ -219,7 +228,7 @@ int main(int argc, char **argv) {
     glutTimerFunc(0,drawFallingBlock,fallSpeed);
     glutSpecialFunc( process_Normal_Keys );
     glutKeyboardFunc(char_keys);
-    glutTimerFunc(0,key_movement,0);
+    glutTimerFunc(0,key_movement,calculate_frames(60));
     glutMainLoop();
     return 0;
 }
