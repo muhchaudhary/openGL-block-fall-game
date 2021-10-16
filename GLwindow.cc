@@ -11,8 +11,8 @@ RGB set_RGB(float r, float g, float b) {
 }
 
 void drawCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
-    float border = 1.2;
-    glColor3f(0.898, 0.847, 0.843);
+    float border = 1.5;
+    glColor3f(0,0, 0.0);
     int x1 = xOffset + 0 + x*width;
     int y1 = yOffset + 0 + y*width;
     int y2 = yOffset + width+ y*width;
@@ -24,6 +24,39 @@ void drawCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
         glVertex2f(x1, y2);
     glEnd();
 
+    glColor3f(rgb.r,rgb.g,rgb.b); 
+    
+    glBegin(GL_POLYGON);
+        glVertex2f(x1+border, y1+border);
+        glVertex2f(x2-border, y1+border);
+        glVertex2f(x2-border, y2-border);
+        glVertex2f(x1+border, y2-border);
+    glEnd();
+    float scale = 0.5;
+    glColor3f(1,1,1); 
+    glRectf(x1+border,y1+border,x1+border+(4 * scale),y1+border+(4 * scale));
+//    glRectf(x1+border+(4 * scale),y1+border+(4 * scale),x1+border+(8 * scale),y1+border+(8 * scale));
+//    glRectf(x1+border+(4 * scale),y1+border+(8 * scale),x1+border+(8 * scale),y1+border+(12 * scale));
+//    glRectf(x1+border+(8 * scale),y1+border+(4 * scale),x1+border+(12 * scale),y1+border+(8 * scale));
+
+/*
+    glBegin(GL_POINTS);
+
+        glVertex2f(x1+border+1,y1+border+1);
+        glVertex2f(x1+border+1,y1+border+2);
+        glVertex2f(x1+border+2,y1+border+1);
+        glVertex2f(x1+border+2,y1+border+2);        
+    glEnd();
+*/
+    //glFlush();
+}
+
+void drawEmptyCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
+    float border = 0;
+    int x1 = xOffset + 0 + x*width;
+    int y1 = yOffset + 0 + y*width;
+    int y2 = yOffset + width+ y*width;
+    int x2 = xOffset + width+ x*width;
     glColor3f(rgb.r,rgb.g,rgb.b); 
     
     glBegin(GL_POLYGON);

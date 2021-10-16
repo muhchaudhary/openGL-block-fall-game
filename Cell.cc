@@ -39,7 +39,7 @@ void Cell::draw(int offset){
 
     switch (blockType) {
       case 'n':
-        drawCell(x,y,30,set_RGB(0,0,0),offset,yOFFSET);
+        drawEmptyCell(x,y,30,set_RGB(0,0,0),offset,yOFFSET);
         break;
       case 'T':
         drawCell(x,y,30,set_RGB(0.666, 0.086, 0.035),offset,yOFFSET);

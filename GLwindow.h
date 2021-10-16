@@ -20,6 +20,8 @@ class RGB {
 
 //draws a cell with borders
 void drawCell(int y, int x, int width, RGB rgb, int xOffset = 0, int yOffset = 0);
+//draws cell without borders
+void drawEmptyCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset);
 //simple string renderer
 void RenderString(float x, float y, void *font, const char* string);
 //draws a simple rectangle
