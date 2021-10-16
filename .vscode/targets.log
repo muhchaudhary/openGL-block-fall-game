@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri Oct 15 11:28:17 2021
+# Make data base, printed on Sat Oct 16 13:32:12 2021
 
 # Variables
 
@@ -23,7 +23,7 @@ GJS_DEBUG_OUTPUT = stderr
 # environment
 CSF_EXCEPTION_PROMPT = 1
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-4e3ccb99-e6c1-46b6-b3aa-c40d72936900.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-321745f9-ae41-41c9-a15b-630d24454726.sock
 # environment
 CSF_XmlOcafResource = /usr/share/opencascade/resources/XmlOcafResource
 # environment
@@ -110,14 +110,14 @@ WAYLAND_DISPLAY = wayland-0
 XDG_SESSION_DESKTOP = GNOME
 # environment
 VSCODE_CRASH_REPORTER_START_OPTIONS = {"companyName":"Microsoft","productName":"Code - OSS","submitURL":"","uploadToServer":false}
-# makefile (from 'block.d', line 1)
-MAKEFILE_LIST := Makefile triangle.d GLwindow.d Cell.d block.d
+# makefile (from 'font.d', line 1)
+MAKEFILE_LIST := Makefile triangle.d GLwindow.d Cell.d block.d font.d
 # automatic
 @F = $(notdir $@)
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 2275474
+VSCODE_PID = 2669446
 # environment
 XDG_SESSION_TYPE = wayland
 # automatic
@@ -201,7 +201,7 @@ DESKTOP_SESSION = gnome
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = GNOME
 # makefile (from 'Makefile', line 3)
-OBJECTS = triangle.o GLwindow.o Cell.o block.o
+OBJECTS = triangle.o GLwindow.o Cell.o block.o font.o
 # 'override' directive
 GNUMAKEFLAGS := 
 # environment
@@ -227,7 +227,7 @@ MANAGERPID = 128624
 # environment
 LC_MEASUREMENT = en_CA.UTF-8
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 2275451
+GIO_LAUNCHED_DESKTOP_FILE_PID = 2669395
 # environment
 _ = /usr/bin/make
 # environment
@@ -275,17 +275,18 @@ XDG_MENU_PREFIX = gnome-
 # environment
 LC_IDENTIFICATION = en_CA.UTF-8
 # variable set hash-table stats:
-# Load=131/1024=13%, Rehash=0, Collisions=11/173=6%
+# Load=131/1024=13%, Rehash=0, Collisions=11/175=6%
 
 # Pattern-specific Variable Values
 
 # No pattern-specific variable values.
 
 # Directories
+ 
 
-# . (device 65024, inode 8003940): 23 files, no impossibilities.
+# . (device 65024, inode 8003940): 28 files, no impossibilities.
 
-# 23 files, no impossibilities in 1 directories.
+# 28 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -308,8 +309,7 @@ GLwindow.cc:
 # Not a target:
 Cell.d:
 #  Implicit rule search has been done.
- 
-#  Last modified 2021-10-14 18:18:40.273267642
+#  Last modified 2021-10-16 13:29:52.632802551
 #  File has been updated.
 #  Successfully updated.
 
@@ -320,16 +320,23 @@ Cell.cc:
 #  File has not been updated.
 
 # Not a target:
+font.d:
+#  Implicit rule search has been done.
+#  Last modified 2021-10-16 13:30:45.302801224
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2021-10-14 16:49:22.438987055
+#  Last modified 2021-10-16 13:30:43.662801292
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 block.d:
 #  Implicit rule search has been done.
-#  Last modified 2021-10-14 18:18:40.993264784
+#  Last modified 2021-10-16 13:29:53.332802545
 #  File has been updated.
 #  Successfully updated.
 
@@ -347,18 +354,35 @@ clean:
 #  recipe to execute (from 'Makefile', line 14):
 	rm ${DEPENDS} ${OBJECTS} ${EXEC}
 
+font.o: font.cc font.h GLwindow.h
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+font.cc:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 # Not a target:
 Cell.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
-triangle: triangle.o GLwindow.o Cell.o block.o
+triangle: triangle.o GLwindow.o Cell.o block.o font.o
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 8):
 	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
+
+# Not a target:
+font.h:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 .DEFAULT:
@@ -384,7 +408,7 @@ GLwindow.h:
 #  Modification time never checked.
 #  File has not been updated.
 
-triangle.o: triangle.cc GLwindow.h Cell.h block.h
+triangle.o: triangle.cc font.h GLwindow.h Cell.h block.h
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -397,7 +421,7 @@ Cell.o: Cell.cc Cell.h GLwindow.h
 # Not a target:
 triangle.d:
 #  Implicit rule search has been done.
-#  Last modified 2021-10-14 18:18:39.256605013
+#  Last modified 2021-10-16 13:30:34.019468325
 #  File has been updated.
 #  Successfully updated.
 
@@ -410,7 +434,7 @@ triangle.cc:
 # Not a target:
 GLwindow.d:
 #  Implicit rule search has been done.
-#  Last modified 2021-10-14 18:18:39.729936467
+#  Last modified 2021-10-16 13:29:52.139469221
 #  File has been updated.
 #  Successfully updated.
 
@@ -425,19 +449,20 @@ block.o: block.cc block.h Cell.h GLwindow.h
 #  File has not been updated.
 
 # files hash-table stats:
-# Load=22/1024=2%, Rehash=0, Collisions=3/59=5%
+# Load=26/1024=3%, Rehash=0, Collisions=3/70=4%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 30 / storage = 263 B / avg = 8 B
-# current buf: size = 8162 B / used = 263 B / count = 30 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 35 / storage = 301 B / avg = 8 B
+# current buf: size = 8162 B / used = 301 B / count = 35 / avg = 8 B
 
-# strcache performance: lookups = 72 / hit rate = 58%
+# strcache performance: lookups = 86 / hit rate = 59%
 # hash-table stats:
-# Load=30/8192=0%, Rehash=0, Collisions=4/72=6%
-# Finished Make data base on Fri Oct 15 11:28:17 2021
+# Load=35/8192=0%, Rehash=0, Collisions=4/86=5%
+# Finished Make data base on Sat Oct 16 13:32:12 2021
+ 
 
  

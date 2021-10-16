@@ -1,17 +1,15 @@
-#include "GL/freeglut.h"
-#include "GL/gl.h"
 #include <iostream>
 #include <string>
-#include "GLwindow.h"
 #include <vector>
-#include <map>
 #include <utility>
-#include "Cell.h"
-#include "block.h"
 #include <cstdlib>
 #include <string>
 #include <stdlib.h>
 #include <time.h>
+#include "font.h"
+#include "Cell.h"
+#include "block.h"
+#include "GLwindow.h"
 // global vars 
 std::vector<std::vector<Cell>> board;
 std::vector<Point> currBlockPoints;
@@ -148,18 +146,28 @@ void key_movement(int now_runs) {
 
     } 
     if (rowsCleared > 3) {
-        fallSpeed = 250;
+        fallSpeed = 100;
     }
     drawPreviewDrop(offset,1,currBlockPoints,board);
     glutTimerFunc(now_runs, key_movement, now_runs);
 }
 
 
+
 void display(){
     glClearColor(0.039, 0.145, 0.239,0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    RenderString(WIDTH/2-70, 25, GLUT_BITMAP_9_BY_15,"BLOCK FALL GAME");
-    RenderString(500,200,GLUT_BITMAP_8_BY_13,("Score: " + std::to_string(rowsCleared)).c_str());
+    glColor3f(1,1,1); 
+    glRasterPos2i(WIDTH/2-70, 25);
+    char * str = "BLOCK FALL GAME";
+    printString(str);
+    glRasterPos2i(560,200);
+    std::string s = "SCORE: " + std::to_string(rowsCleared);
+    int n = s.length();
+    char str2[n + 1];
+    strcpy(str2, s.c_str());
+    printString(str2);
+    glRectf(100-5,100-5,(30*numCols+offset)+5,(30*numRows+100)+5);
     drawPreview(nextBlock,20,500);
     // draw grid for my player 
     // need to also add option for y offset
@@ -207,7 +215,6 @@ void drawFallingBlock(int value) {
     glutTimerFunc(fallSpeed, drawFallingBlock, fallSpeed);
 }
 
-
 // subject to change drastically
 int main(int argc, char **argv) {
    struct timespec ts;
@@ -220,7 +227,9 @@ int main(int argc, char **argv) {
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("Biquadris");
+    glutCreateWindow("BLOCK FALL GAME");
+    glShadeModel (GL_FLAT);
+    makeRasterFont();
     glOrtho(0, WIDTH, HEIGHT, 0.2, -1, 1);
     glutDisplayFunc(display);
     glutTimerFunc(0,fps,calculate_frames(60));
