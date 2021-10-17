@@ -24,8 +24,6 @@ void drawCell(int y, int x, int width, RGB rgb, int xOffset = 0, int yOffset = 0
 void drawEmptyCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset);
 //simple string renderer
 void RenderString(float x, float y, void *font, const char* string);
-//draws a simple rectangle
-void drawRect(int x1, int y1, int x2, int y2, RGB rgb);
 RGB set_RGB(float r, float g, float b);
 
 #endif

@@ -169,7 +169,7 @@ bool drop(int offset, int level,
 }
 
 bool checkRow(int i,std::vector<std::vector<Cell>>& grid) {
-    for (int j = 0; j < 11; ++j) {
+    for (int j = 0; j < numCols; ++j) {
         if (grid[i][j].getType() == 'n') {
             return false;
         }
@@ -199,7 +199,7 @@ void clearRow(int i, std::vector<std::vector<Cell>>& grid) {
             grid[j][i].setType(tmpType,grid[j][i].getId(),grid[j][i].getLev());
         }
     }
-    for (int k = 0; k < 11; ++k) {
+    for (int k = 0; k < numCols; ++k) {
         grid[0][k].setType('n',-1,-1);
     }
 }
