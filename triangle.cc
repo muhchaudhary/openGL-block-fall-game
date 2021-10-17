@@ -146,13 +146,11 @@ void key_movement(int now_runs) {
 
     } 
     if (rowsCleared > 3) {
-        fallSpeed = 100;
+        fallSpeed = 500;
     }
     drawPreviewDrop(offset,1,currBlockPoints,board);
     glutTimerFunc(now_runs, key_movement, now_runs);
 }
-
-
 
 void display(){
     glClearColor(0.039, 0.145, 0.239,0);
@@ -162,7 +160,7 @@ void display(){
     char * str = "BLOCK FALL GAME";
     printString(str);
     glRasterPos2i(560,200);
-    std::string s = "SCORE: " + std::to_string(rowsCleared);
+    std::string s = "SCORE:" + std::to_string(rowsCleared);
     int n = s.length();
     char str2[n + 1];
     strcpy(str2, s.c_str());

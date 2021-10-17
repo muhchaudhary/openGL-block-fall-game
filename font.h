@@ -7,5 +7,4 @@
 void makeRasterFont();
 void printString(char* s);
 
-
 #endif
