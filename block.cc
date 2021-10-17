@@ -309,9 +309,6 @@ bool drawPreviewDrop(int offset, int level,
     int xaxis = 0;
     int yaxis = 1;
     int runtime = 0;
-    //if (!shift(0,1,offset,1,blockPoints,grid)) {
-    //    return false;
-    //}
     while (validBounds(blockPoints, xaxis, yaxis,grid)) {
         for (int i = 0; i < (int)blockPoints.size()-1; i++) {
             //grid[blockPoints[i].y][blockPoints[i].x].setType('n',-1, -1); // turn off
@@ -320,8 +317,8 @@ bool drawPreviewDrop(int offset, int level,
             }
             blockPoints[i].x += xaxis;
             blockPoints[i].y += yaxis;
-        if (runtime > 1) {
-            for (int j = 0; j < (int)blockPoints.size()-1; j++) {
+        for (int j = 0; j < (int)blockPoints.size()-1; j++) {
+            if (grid[blockPoints[j].y][blockPoints[j].x].getType() == 'n') {
                 grid[blockPoints[j].y][blockPoints[j].x].setType('p',id,level);
                 }
             }

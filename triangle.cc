@@ -153,20 +153,30 @@ void key_movement(int now_runs) {
 }
 
 void display(){
-    glClearColor(0.039, 0.145, 0.239,0);
+    glClearColor(0.0, 1/(float)rand(), 0.0,0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     glColor3f(1,1,1); 
-    glRasterPos2i(WIDTH/2-70, 25);
-    char * str = "BLOCK FALL GAME";
-    printString(str);
+    /*----------------------------*/
+    glRasterPos2i(WIDTH/2-150, 25);
+    std::string str = "BLOCK FALL GAME";
+    char str3[str.length()+1];
+    strcpy(str3, str.c_str());
+    printString(str3);
+    /*----------------------------*/
     glRasterPos2i(560,200);
     std::string s = "SCORE:" + std::to_string(rowsCleared);
-    int n = s.length();
-    char str2[n + 1];
+    char str2[s.length() + 1];
     strcpy(str2, s.c_str());
     printString(str2);
+    /*----------------------------*/
+    glRasterPos2i(560,300);
+    std::string st = "NEXT";
+    char st0[st.length() + 1];
+    strcpy(st0, st.c_str());
+    printString(st0);
+
     glRectf(100-5,100-5,(30*numCols+offset)+5,(30*numRows+100)+5);
-    drawPreview(nextBlock,20,500);
+    drawPreview(nextBlock,300,560);
     // draw grid for my player 
     // need to also add option for y offset
     // this is just a test to see if graphics are working proper

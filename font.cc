@@ -536,14 +536,6 @@ void getLetter(int row, int col) {
     }
 }
 
-float clacTextWidth(GLubyte* letter) {
-    for(int i = 0; i < 24; i++) {
-        for(int j = 0; j < 3; j++) {
-            letter[j * 24 + i];
-        }
-    } 
-}
-
 void makeRasterFont() {
     GLuint i, j;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

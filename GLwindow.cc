@@ -12,7 +12,7 @@ RGB set_RGB(float r, float g, float b) {
 
 void drawCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
     float border = 1.5;
-    glColor3f(0,0, 0.0);
+    glColor3f(0,0,0);
     int x1 = xOffset + 0 + x*width;
     int y1 = yOffset + 0 + y*width;
     int y2 = yOffset + width+ y*width;
@@ -35,9 +35,9 @@ void drawCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
     float scale = 0.5;
     glColor3f(1,1,1); 
     glRectf(x1+border,y1+border,x1+border+(4 * scale),y1+border+(4 * scale));
-//    glRectf(x1+border+(4 * scale),y1+border+(4 * scale),x1+border+(8 * scale),y1+border+(8 * scale));
-//    glRectf(x1+border+(4 * scale),y1+border+(8 * scale),x1+border+(8 * scale),y1+border+(12 * scale));
-//    glRectf(x1+border+(8 * scale),y1+border+(4 * scale),x1+border+(12 * scale),y1+border+(8 * scale));
+ //   glRectf(x1+border+(4 * scale),y1+border+(4 * scale),x1+border+(8 * scale),y1+border+(8 * scale));
+ //   glRectf(x1+border+(4 * scale),y1+border+(8 * scale),x1+border+(8 * scale),y1+border+(12 * scale));
+ //   glRectf(x1+border+(8 * scale),y1+border+(4 * scale),x1+border+(12 * scale),y1+border+(8 * scale));
 
 /*
     glBegin(GL_POINTS);
