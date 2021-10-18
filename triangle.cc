@@ -69,12 +69,11 @@ char createBlock(){
 
 void process_Normal_Keys(int key, int x, int y)  {
      switch (key) {
-       case 27  : exit(0);     break;
-       case 100 : move_left = true;engine->play2D("media/BONG.ogg", false); ; ;  break;
-       case 102 : move_right= true;engine->play2D("media/BONG.ogg", false); ; ;  break;
-       case 999 : drop_down = true;engine->play2D("media/BONG.ogg", false);; ;  break;
-       case 103 : move_down = true;engine->play2D("media/BONG.ogg", false);; ;  break;
-       case 101 : drop_down = true;engine->play2D("media/poop.ogg", false); ; ;  break;
+       case 100 : move_left = true;   ;  break;
+       case 102 : move_right= true;   ;  break;
+       case 999 : drop_down = true;   ;  break;
+       case 103 : move_down = true;   ;  break;
+       case 101 : drop_down = true;   ;  break;
     }
 }
 
