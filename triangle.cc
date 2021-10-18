@@ -166,22 +166,13 @@ void display(){
     glColor3f(1,1,1); 
     /*----------------------------*/
     glRasterPos2i(WIDTH/2-150, 25);
-    std::string str = "BLOCK FALL GAME";
-    char str3[str.length()+1];
-    strcpy(str3, str.c_str());
-    printString(str3);
+    printString("BLOCK FALL GAME");
     /*----------------------------*/
     glRasterPos2i(560,200);
-    std::string s = "SCORE:" + std::to_string(rowsCleared);
-    char str2[s.length() + 1];
-    strcpy(str2, s.c_str());
-    printString(str2);
+    printString("SCORE:" + std::to_string(rowsCleared));
     /*----------------------------*/
     glRasterPos2i(560,300);
-    std::string st = "NEXT";
-    char st0[st.length() + 1];
-    strcpy(st0, st.c_str());
-    printString(st0);
+    printString("NEXT");
 
     glRectf(100-5,100-5,(30*numCols+offset)+5,(30*numRows+100)+5);
     drawPreview(nextBlock,300,560);
@@ -244,7 +235,7 @@ int main(int argc, char **argv) {
     glutInitWindowSize(WIDTH, HEIGHT);
     glutInitWindowPosition(0, 0);
     glutCreateWindow("BLOCK FALL GAME");
-    glShadeModel (GL_FLAT);
+    //glShadeModel (GL_FLAT);
     makeRasterFont();
     glOrtho(0, WIDTH, HEIGHT, 0.2, -1, 1);
     glutDisplayFunc(display);

@@ -1,5 +1,4 @@
 #include "font.h"
-#include <iostream>
 const int FONTW = 32;
 
 
@@ -562,9 +561,11 @@ void makeRasterFont() {
 }
 
 
-void printString(char* s) {
-   glPushAttrib (GL_LIST_BIT);
-   glListBase(fontOffset);
-   glCallLists(strlen(s), GL_UNSIGNED_BYTE, (GLubyte *) (s));
-   glPopAttrib ();
+void printString(std::string s) {
+	char str[s.length()+1];
+	strcpy(str, s.c_str());
+	glPushAttrib (GL_LIST_BIT);
+	glListBase(fontOffset);
+	glCallLists(s.length(), GL_UNSIGNED_BYTE, (GLubyte *) (str));
+	glPopAttrib ();
 }

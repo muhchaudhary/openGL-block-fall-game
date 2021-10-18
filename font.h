@@ -3,8 +3,9 @@
 
 #include <cstring>
 #include "GLwindow.h"
+#include <string>
 
 void makeRasterFont();
-void printString(char* s);
+void printString(std::string s);
 
 #endif
