@@ -37,15 +37,11 @@ double calculate_frames(int frames) {
 
 // basic block creator using rand()
 char createBlock(){
-    int block_type = random() % 6; // generate random number with values from 0 to 5 (p = 1/6)
+    int block_type = random() % 8; // generate random number with values from 0 to 7 (p = 1/8)
     char block = 0;
     switch (block_type) {
     case 0:
-        if(random()%2 == 0) { // (p = 1/2), for each option we have p = 1/12
-            block = 'S'; // 1/6 chance of getting zero and 1 /2 chance of getting zero again  = 1/12
-        } else {
-            block = 'Z';
-        }
+        block = 'S'; 
         break;
     case 1:
         block = 'I';
@@ -62,6 +58,11 @@ char createBlock(){
     case 5:
         block = 'L';
         break;
+    case 6:
+        block = 'Z';
+        break;
+    case 7:
+        return createBlock();
     }
     return block;
 }
@@ -69,11 +70,11 @@ char createBlock(){
 void process_Normal_Keys(int key, int x, int y)  {
      switch (key) {
        case 27  : exit(0);     break;
-       case 100 : move_left = true; ; ;  break;
-       case 102 : move_right= true; ; ;  break;
-       case 999 : drop_down = true; ; ;  break;
-       case 103 : move_down = true; ; ;  break;
-       case 101 : drop_down = true; ; ;  break;
+       case 100 : move_left = true;engine->play2D("media/BONG.ogg", false); ; ;  break;
+       case 102 : move_right= true;engine->play2D("media/BONG.ogg", false); ; ;  break;
+       case 999 : drop_down = true;engine->play2D("media/BONG.ogg", false);; ;  break;
+       case 103 : move_down = true;engine->play2D("media/BONG.ogg", false);; ;  break;
+       case 101 : drop_down = true;engine->play2D("media/poop.ogg", false); ; ;  break;
     }
 }
 
@@ -103,6 +104,17 @@ void fps(int frames) {
 }
 
 
+int dropped = 1;
+void timedDrop(int doDrop) {
+    dropped = 0;
+    if (shift(0,1,offset,1,currBlockPoints,board)) {
+        glutTimerFunc(doDrop,timedDrop,doDrop);
+    } else {
+        block_placed = true;
+        dropped = 1;
+    }
+}
+
 void key_movement(int now_runs) {
     player_moved = false;
     if(move_down) {
@@ -118,8 +130,8 @@ void key_movement(int now_runs) {
         move_left = false;
         player_moved = true;
     } else if (drop_down) {
-        drop(offset,1,currBlockPoints,board);
-        block_placed = true;
+        glutTimerFunc(15,timedDrop,15);
+        //drop(offset,1,currBlockPoints,board);
         drop_down = false;
         player_moved = true;
     } else if (rotate_cc) {
@@ -141,9 +153,6 @@ void key_movement(int now_runs) {
             exit(0);
         }
         block_placed = false;
-        //glutSwapBuffers();
-        //glutPostRedisplay();
-
     } 
     if (rowsCleared > 3) {
         fallSpeed = 500;
@@ -210,7 +219,7 @@ void drawFallingBlock(int value) {
         shift(4,0,offset,1,currBlockPoints,board);    
         draw_block = false;    
     }
-    if (player_moved == true) {
+    if (player_moved == true || dropped == 0) {
         player_moved = false;
         glutTimerFunc(value, drawFallingBlock, value);
         return;
