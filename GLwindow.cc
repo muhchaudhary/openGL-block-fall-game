@@ -69,7 +69,7 @@ void drawEmptyCell(int y, int x, int width, RGB rgb, int xOffset,int yOffset) {
     //glFlush();
 }
 
-void RenderString(float x, float y, void *font, const char* string) {  
+void RenderString(float x, float y, void *font, const char* string) {
 
   glColor3f(1,1,1); 
   glRasterPos2f(x, y);

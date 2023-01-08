@@ -1,8 +1,8 @@
 CXX = g++
 CXXFLAGS =  -Wall -MMD -lglut -lGLU -lGL 
-OBJECTS = triangle.o GLwindow.o Cell.o block.o font.o
+OBJECTS = blockfall.o GLwindow.o Cell.o block.o font.o
 DEPENDS = ${OBJECTS:.o=.d}
-EXEC = triangle
+EXEC = blockfall
 
 ${EXEC} : ${OBJECTS}
 	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
