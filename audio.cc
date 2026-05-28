@@ -140,64 +140,118 @@ static std::vector<int16_t> makeSFX_GameOver() {
 
 // ── Korobeiniki melody synthesis ───────────────────────────────────────────────
 
+// Music note: square-wave harmonics + vibrato for warm chiptune character
 static std::vector<int16_t> mN(float hz, float dur) {
-    // music note: gentle sine with soft attack/release
-    return genNote(hz, dur, 0.28f, 0.008f, 0.05f);
+    int n = (int)(dur * SR);
+    std::vector<int16_t> out(n);
+    const float vol = 0.24f;
+    const float atk = 0.010f;
+    const float rel = 0.07f;
+    double phase = 0.0;
+    for (int i = 0; i < n; i++) {
+        float t = (float)i / SR;
+        float env = 1.0f;
+        if (t < atk) env = t / atk;
+        float rs = dur - rel;
+        if (rel > 0.0f && t > rs) env *= 1.0f - (t - rs) / rel;
+        // Ramp vibrato in after 40 ms (1.2% depth, 5.5 Hz rate)
+        float vd = (t > 0.04f) ? std::min(1.0f, (t - 0.04f) / 0.04f) * 0.012f : 0.0f;
+        float vib = vd * sinf(PI2 * 5.5f * t);
+        phase += PI2 * (double)(hz * (1.0f + vib)) / SR;
+        float p = (float)phase;
+        // Odd harmonics → warm square-ish tone
+        float s = 0.60f * sinf(p) + 0.25f * sinf(3.0f * p)
+                + 0.10f * sinf(5.0f * p) + 0.05f * sinf(7.0f * p);
+        out[i] = (int16_t)(vol * env * 32767.0f * s);
+    }
+    return out;
+}
+
+// Bass note: sawtooth harmonics for warm low-end depth
+static std::vector<int16_t> mB(float hz, float dur) {
+    int n = (int)(dur * SR);
+    std::vector<int16_t> out(n);
+    const float vol = 0.19f;
+    const float atk = 0.004f;
+    const float rel = 0.10f;
+    double phase = 0.0;
+    for (int i = 0; i < n; i++) {
+        float t = (float)i / SR;
+        float env = 1.0f;
+        if (t < atk) env = t / atk;
+        float rs = dur - rel;
+        if (rel > 0.0f && t > rs) env *= 1.0f - (t - rs) / rel;
+        phase += PI2 * (double)hz / SR;
+        float p = (float)phase;
+        // Sawtooth approximation (fundamental + falling harmonics), normalized
+        float s = (sinf(p) + 0.500f * sinf(2.0f * p)
+                 + 0.333f * sinf(3.0f * p) + 0.250f * sinf(4.0f * p)) / 2.083f;
+        out[i] = (int16_t)(vol * env * 32767.0f * s);
+    }
+    return out;
 }
 
 static std::vector<int16_t> buildMusic() {
     // 144 BPM
-    const float q  = 60.0f / 144.0f;   // quarter
-    const float e  = q / 2.0f;         // eighth
-    const float h  = q * 2.0f;         // half
-    const float dq = q * 1.5f;         // dotted quarter
+    const float q  = 60.0f / 144.0f;
+    const float e  = q / 2.0f;
+    const float h  = q * 2.0f;
+    const float dq = q * 1.5f;
 
-    // Frequencies
+    // Melody frequencies
     const float E5 = 659.25f, B4 = 493.88f, C5 = 523.25f, D5 = 587.33f;
     const float A4 = 440.00f, F5 = 698.46f, A5 = 880.00f, G5 = 783.99f;
 
-    std::vector<int16_t> song;
-    auto app = [&](std::vector<int16_t> seg) {
-        song.insert(song.end(), seg.begin(), seg.end());
-    };
+    // Bass frequencies (octaves 2–3)
+    const float E2 = 82.41f,  A2 = 110.00f, B2 = 123.47f, Fs2 = 92.50f;
+    const float G2 = 98.00f,  C3 = 130.81f, D3 = 146.83f, E3 = 164.81f;
 
-    // ── Part A ─────────────────────────────────────────────────
-    // M1: E5(q) B4(e) C5(e) D5(q) C5(e) B4(e)
+    // ── Melody ─────────────────────────────────────────────────
+    std::vector<int16_t> melody;
+    auto app = [&](std::vector<int16_t> seg) { melody.insert(melody.end(), seg.begin(), seg.end()); };
+
+    // Part A
     app(mN(E5,q)); app(mN(B4,e)); app(mN(C5,e));
     app(mN(D5,q)); app(mN(C5,e)); app(mN(B4,e));
-
-    // M2: A4(q) A4(e) C5(e) E5(q) D5(e) C5(e)
     app(mN(A4,q)); app(mN(A4,e)); app(mN(C5,e));
     app(mN(E5,q)); app(mN(D5,e)); app(mN(C5,e));
-
-    // M3: B4(dq) C5(e) D5(q) E5(q)
     app(mN(B4,dq)); app(mN(C5,e));
-    app(mN(D5,q)); app(mN(E5,q));
+    app(mN(D5,q));  app(mN(E5,q));
+    app(mN(C5,q));  app(mN(A4,q)); app(mN(A4,h));
 
-    // M4: C5(q) A4(q) A4(h)
-    app(mN(C5,q)); app(mN(A4,q)); app(mN(A4,h));
-
-    // ── Part B ─────────────────────────────────────────────────
-    // M5: D5(q) F5(q) A5(dq) G5(e)
+    // Part B
     app(mN(D5,q)); app(mN(F5,q));
     app(mN(A5,dq)); app(mN(G5,e));
-
-    // M6: F5(q) E5(dq) C5(e) E5(q)
     app(mN(F5,q));
     app(mN(E5,dq)); app(mN(C5,e));
     app(mN(E5,q));
-
-    // M7: D5(e) C5(e) B4(q) B4(e) C5(e) D5(e) rest(e)
     app(mN(D5,e)); app(mN(C5,e));
     app(mN(B4,q));
     app(mN(B4,e)); app(mN(C5,e));
     app(mN(D5,e)); app(silence(e));
-
-    // M8: E5(q) C5(q) A4(q) A4(h)
     app(mN(E5,q)); app(mN(C5,q));
     app(mN(A4,q)); app(mN(A4,h));
 
-    return song;
+    // ── Bass (oom-pah: root on beats 1&3, fifth on beats 2&4) ──
+    std::vector<int16_t> bass;
+    auto appB = [&](std::vector<int16_t> seg) { bass.insert(bass.end(), seg.begin(), seg.end()); };
+
+    // Part A
+    appB(mB(E3,q)); appB(mB(B2,q)); appB(mB(E3,q));  appB(mB(B2,q));  // M1 Em
+    appB(mB(A2,q)); appB(mB(E2,q)); appB(mB(A2,q));  appB(mB(E2,q));  // M2 Am
+    appB(mB(B2,q)); appB(mB(Fs2,q)); appB(mB(B2,q)); appB(mB(Fs2,q)); // M3 B
+    appB(mB(A2,q)); appB(mB(E2,q)); appB(mB(A2,h));                   // M4 Am
+
+    // Part B
+    appB(mB(D3,q)); appB(mB(A2,q)); appB(mB(D3,q)); appB(mB(A2,q));  // M5 Dm
+    appB(mB(C3,q)); appB(mB(G2,q)); appB(mB(C3,q)); appB(mB(G2,q));  // M6 C
+    appB(mB(G2,q)); appB(mB(D3,q)); appB(mB(G2,q)); appB(mB(D3,q));  // M7 G
+    appB(mB(A2,q)); appB(mB(E2,q)); appB(mB(A2,q)); appB(mB(A2,h)); // M8 Am
+
+    size_t len = std::max(melody.size(), bass.size());
+    melody.resize(len, 0);
+    bass.resize(len, 0);
+    return mix2(melody, bass);
 }
 
 // ── OpenAL lifecycle ───────────────────────────────────────────────────────────
