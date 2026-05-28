@@ -98,99 +98,140 @@ static void drawBorderRect(float x1, float y1, float x2, float y2,
 
 // ── settings screen ──────────────────────────────────────────────────────────
 void displaySettings() {
-    glClearColor(0.04f, 0.04f, 0.08f, 1.0f);
+    glClearColor(0.06f, 0.06f, 0.11f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    const float px1 = 220.0f, py1 = 165.0f;
-    const float px2 = 680.0f, py2 = 612.0f;
+    // Frozen game board as background context
+    for (int i = 0; i < numRows; i++)
+        for (int j = 0; j < numCols; j++)
+            board[i][j].draw(offset);
+
+    // Dark overlay to dim the background
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0.04f, 0.04f, 0.09f, 0.80f);
+    glRectf(0.0f, 0.0f, (float)WIDTH, (float)HEIGHT);
+    glDisable(GL_BLEND);
+
+    // PAUSED indicator above panel
+    glColor3f(0.40f, 0.36f, 0.60f);
+    glString((float)WIDTH / 2.0f - 28.0f, 58.0f, GLUT_BITMAP_HELVETICA_12, "- PAUSED -");
+
+    const float px1 = 200.0f, py1 = 162.0f;
+    const float px2 = 700.0f, py2 = 608.0f;
 
     // Drop shadow
-    drawFilledRect(px1+6, py1+6, px2+6, py2+6, 0.0f, 0.0f, 0.0f);
+    drawFilledRect(px1+7, py1+7, px2+7, py2+7, 0.0f, 0.0f, 0.0f);
 
     // Panel background
-    drawFilledRect(px1, py1, px2, py2, 0.09f, 0.09f, 0.17f);
+    drawFilledRect(px1, py1, px2, py2, 0.08f, 0.08f, 0.15f);
 
     // Panel border (two-line glow)
-    drawBorderRect(px1,   py1,   px2,   py2,   0.42f, 0.36f, 0.68f);
+    drawBorderRect(px1,   py1,   px2,   py2,   0.44f, 0.37f, 0.70f);
     drawBorderRect(px1+2, py1+2, px2-2, py2-2, 0.22f, 0.18f, 0.40f);
 
     // Title bar
-    drawFilledRect(px1+2, py1+2, px2-2, py1+52, 0.14f, 0.11f, 0.26f);
-    glColor3f(0.86f, 0.82f, 1.00f);
-    glString(px1 + 138, py1 + 34, GLUT_BITMAP_HELVETICA_18,
-             "S E T T I N G S");
+    drawFilledRect(px1+2, py1+2, px2-2, py1+50, 0.14f, 0.11f, 0.26f);
+    glColor3f(0.88f, 0.84f, 1.00f);
+    glString(px1 + 162.0f, py1 + 34.0f, GLUT_BITMAP_HELVETICA_18, "S E T T I N G S");
 
     // Title divider
-    glColor3f(0.28f, 0.24f, 0.45f);
+    glColor3f(0.26f, 0.22f, 0.42f);
     glBegin(GL_LINES);
-        glVertex2f(px1+14, py1+53); glVertex2f(px2-14, py1+53);
+        glVertex2f(px1+14, py1+51); glVertex2f(px2-14, py1+51);
     glEnd();
 
     char buf[80];
-    float optX = px1 + 42.0f;
+    const float optX = px1 + 28.0f;
+    const float valX = px2 - 158.0f;
     float optY = py1 + 100.0f;
+    const float rowH = 60.0f;
 
-    auto rowBg = [&](float y, bool sel, float r, float g, float b) {
-        if (sel) drawFilledRect(px1+14, y-24, px2-14, y+10, r, g, b);
+    auto rowHighlight = [&](float y, bool sel) {
+        if (sel) {
+            drawFilledRect(px1+10, y-28, px2-10, y+14, 0.14f, 0.11f, 0.30f);
+            drawBorderRect(px1+10, y-28, px2-10, y+14, 0.40f, 0.34f, 0.68f);
+        }
     };
-    auto rowColor = [&](bool sel) {
-        glColor3f(sel ? 1.00f : 0.70f,
-                  sel ? 0.95f : 0.68f,
-                  sel ? 0.30f : 0.86f);
+    auto labelColor = [&](bool sel) {
+        glColor3f(sel ? 1.00f : 0.62f, sel ? 0.94f : 0.60f, sel ? 0.28f : 0.84f);
+    };
+    auto valueColor = [&](bool sel) {
+        glColor3f(sel ? 0.88f : 0.52f, sel ? 0.80f : 0.48f, sel ? 1.00f : 0.74f);
     };
 
     // ── FALL SPEED ────────────────────────────────────────────────────────────
     bool s0 = (settingsSelected == 0);
-    rowBg(optY, s0, 0.14f, 0.12f, 0.28f);
-    rowColor(s0);
-    snprintf(buf, sizeof(buf), "FALL SPEED     < %s >", speedNames[speedIndex]);
-    glString(optX, optY, GLUT_BITMAP_HELVETICA_18, buf);
+    rowHighlight(optY, s0);
+    labelColor(s0);
+    glString(optX, optY, GLUT_BITMAP_HELVETICA_18, "FALL SPEED");
+    snprintf(buf, sizeof(buf), "< %s >", speedNames[speedIndex]);
+    valueColor(s0);
+    glString(valX, optY, GLUT_BITMAP_HELVETICA_18, buf);
 
     // ── GHOST PIECE ───────────────────────────────────────────────────────────
-    optY += 60.0f;
+    optY += rowH;
     bool s1 = (settingsSelected == 1);
-    rowBg(optY, s1, 0.14f, 0.12f, 0.28f);
-    rowColor(s1);
-    snprintf(buf, sizeof(buf), "GHOST PIECE    < %s >", ghostEnabled ? "ON " : "OFF");
-    glString(optX, optY, GLUT_BITMAP_HELVETICA_18, buf);
+    rowHighlight(optY, s1);
+    labelColor(s1);
+    glString(optX, optY, GLUT_BITMAP_HELVETICA_18, "GHOST PIECE");
+    snprintf(buf, sizeof(buf), "< %s >", ghostEnabled ? "ON " : "OFF");
+    valueColor(s1);
+    glString(valX, optY, GLUT_BITMAP_HELVETICA_18, buf);
 
     // ── MUSIC ─────────────────────────────────────────────────────────────────
-    optY += 60.0f;
+    optY += rowH;
     bool s2 = (settingsSelected == 2);
-    rowBg(optY, s2, 0.14f, 0.12f, 0.28f);
-    rowColor(s2);
-    snprintf(buf, sizeof(buf), "MUSIC          < %s >", Audio_GetMusicEnabled() ? "ON " : "OFF");
-    glString(optX, optY, GLUT_BITMAP_HELVETICA_18, buf);
+    rowHighlight(optY, s2);
+    labelColor(s2);
+    glString(optX, optY, GLUT_BITMAP_HELVETICA_18, "MUSIC");
+    snprintf(buf, sizeof(buf), "< %s >", Audio_GetMusicEnabled() ? "ON " : "OFF");
+    valueColor(s2);
+    glString(valX, optY, GLUT_BITMAP_HELVETICA_18, buf);
 
     // Section divider
-    optY += 46.0f;
-    glColor3f(0.20f, 0.17f, 0.33f);
+    optY += 48.0f;
+    glColor3f(0.18f, 0.15f, 0.30f);
     glBegin(GL_LINES);
-        glVertex2f(px1+30, optY); glVertex2f(px2-30, optY);
+        glVertex2f(px1+22, optY); glVertex2f(px2-22, optY);
     glEnd();
-    optY += 32.0f;
+    optY += 34.0f;
 
     // ── RESUME ────────────────────────────────────────────────────────────────
     bool s3 = (settingsSelected == 3);
-    if (s3) drawFilledRect(px1+14, optY-24, px2-14, optY+10, 0.08f, 0.18f, 0.10f);
-    glColor3f(s3 ? 0.35f : 0.42f,
-              s3 ? 1.00f : 0.72f,
-              s3 ? 0.50f : 0.54f);
-    glString(px1 + 158.0f, optY, GLUT_BITMAP_HELVETICA_18, "[ RESUME GAME ]");
+    {
+        float bx1 = px1+55, bx2 = px2-55, by1 = optY-28, by2 = optY+14;
+        if (s3) {
+            drawFilledRect(bx1, by1, bx2, by2, 0.07f, 0.20f, 0.10f);
+            drawBorderRect(bx1, by1, bx2, by2, 0.28f, 0.78f, 0.42f);
+        } else {
+            drawFilledRect(bx1, by1, bx2, by2, 0.07f, 0.12f, 0.08f);
+            drawBorderRect(bx1, by1, bx2, by2, 0.18f, 0.40f, 0.24f);
+        }
+        glColor3f(s3 ? 0.38f : 0.32f, s3 ? 1.00f : 0.66f, s3 ? 0.52f : 0.44f);
+        glString(px1 + 165.0f, optY, GLUT_BITMAP_HELVETICA_18, "RESUME GAME");
+    }
 
     // ── QUIT ──────────────────────────────────────────────────────────────────
     optY += 56.0f;
     bool s4 = (settingsSelected == 4);
-    if (s4) drawFilledRect(px1+14, optY-24, px2-14, optY+10, 0.20f, 0.07f, 0.07f);
-    glColor3f(s4 ? 1.00f : 0.72f,
-              s4 ? 0.32f : 0.38f,
-              s4 ? 0.32f : 0.38f);
-    glString(px1 + 170.0f, optY, GLUT_BITMAP_HELVETICA_18, "[    QUIT    ]");
+    {
+        float bx1 = px1+55, bx2 = px2-55, by1 = optY-28, by2 = optY+14;
+        if (s4) {
+            drawFilledRect(bx1, by1, bx2, by2, 0.24f, 0.06f, 0.06f);
+            drawBorderRect(bx1, by1, bx2, by2, 0.88f, 0.22f, 0.22f);
+        } else {
+            drawFilledRect(bx1, by1, bx2, by2, 0.13f, 0.05f, 0.05f);
+            drawBorderRect(bx1, by1, bx2, by2, 0.40f, 0.12f, 0.12f);
+        }
+        glColor3f(s4 ? 1.00f : 0.68f, s4 ? 0.30f : 0.26f, s4 ? 0.30f : 0.26f);
+        glString(px1 + 178.0f, optY, GLUT_BITMAP_HELVETICA_18, "QUIT GAME");
+    }
 
     // Navigation hint
-    glColor3f(0.32f, 0.30f, 0.48f);
-    glString(px1 + 18.0f, py2 - 22.0f, GLUT_BITMAP_HELVETICA_12,
-             "Arrows: navigate/change    Enter/Space: confirm    S/ESC: resume");
+    glColor3f(0.28f, 0.26f, 0.44f);
+    glString(px1 + 14.0f, py2 - 16.0f, GLUT_BITMAP_HELVETICA_12,
+             "Up/Down: select   Left/Right: change   Enter: confirm   ESC: resume");
 
     glFlush();
 }
@@ -616,40 +657,47 @@ void display() {
     glRectf(95, 95, 30*numCols+offset+5, 30*numRows+100+5);
 
     // ── Right panel ───────────────────────────────────────────
-    // Score
-    glColor3f(0.60f, 0.58f, 0.80f);
-    glRasterPos2i(558, 130); printString("SCORE");
-    glColor3f(0.95f, 0.92f, 1.00f);
-    glRasterPos2i(558, 158); printString(std::to_string(score));
+    // Panel background
+    drawFilledRect(445, 97, 893, 643, 0.08f, 0.08f, 0.14f);
+    drawBorderRect(445, 97, 893, 643, 0.20f, 0.18f, 0.34f);
 
-    // Lines
-    glColor3f(0.60f, 0.58f, 0.80f);
-    glRasterPos2i(558, 192); printString("LINES");
-    glColor3f(0.95f, 0.92f, 1.00f);
-    glRasterPos2i(558, 219); printString(std::to_string(rowsCleared));
+    // Stat card: colored header stripe + label + value
+    auto statCard = [&](float y, const char* label, const std::string& val,
+                        float hr, float hg, float hb) {
+        drawFilledRect(455, y, 883, y + 64, 0.11f, 0.10f, 0.21f);
+        drawBorderRect(455, y, 883, y + 64, 0.25f, 0.22f, 0.43f);
+        drawFilledRect(456, y + 1, 882, y + 21, hr, hg, hb);
+        glColor3f(0.84f, 0.82f, 0.96f);
+        glString(463, y + 16, GLUT_BITMAP_HELVETICA_12, label);
+        glColor3f(1.00f, 0.97f, 1.00f);
+        glString(463, y + 52, GLUT_BITMAP_HELVETICA_18, val.c_str());
+    };
 
-    // Level
-    glColor3f(0.60f, 0.58f, 0.80f);
-    glRasterPos2i(558, 253); printString("LEVEL");
-    glColor3f(0.95f, 0.92f, 1.00f);
-    glRasterPos2i(558, 280); printString(std::to_string(level));
+    statCard(104, "SCORE", std::to_string(score),       0.18f, 0.10f, 0.36f);
+    statCard(175, "LINES", std::to_string(rowsCleared), 0.09f, 0.18f, 0.34f);
+    statCard(246, "LEVEL", std::to_string(level),       0.11f, 0.22f, 0.13f);
 
-    // Next piece box
-    drawFilledRect(548, 305, 750, 450, 0.12f, 0.11f, 0.20f);
-    drawBorderRect( 548, 305, 750, 450, 0.35f, 0.32f, 0.55f);
-    glColor3f(0.60f, 0.58f, 0.80f);
-    glRasterPos2i(616, 325); printString("NEXT");
+    // NEXT piece box
+    drawFilledRect(455, 317, 883, 477, 0.10f, 0.09f, 0.19f);
+    drawBorderRect(455, 317, 883, 477, 0.28f, 0.25f, 0.48f);
+    drawFilledRect(456, 318, 882, 338, 0.14f, 0.11f, 0.26f);
+    glColor3f(0.62f, 0.58f, 0.82f);
+    glString(655, 333, GLUT_BITMAP_HELVETICA_12, "NEXT");
 
-    drawPreview(nextBlock, 325, 560);
+    drawPreview(nextBlock, 317, 615);
 
-    // Controls hint
-    glColor3f(0.38f, 0.36f, 0.56f);
-    glRasterPos2i(554, 470); printString("CONTROLS");
-    glColor3f(0.32f, 0.30f, 0.48f);
-    glRasterPos2i(554, 492); printString("< > v  :  move");
-    glRasterPos2i(554, 512); printString("^  /  Space  :  drop");
-    glRasterPos2i(554, 532); printString("R / W  :  rotate");
-    glRasterPos2i(554, 552); printString("S / ESC  :  menu");
+    // Controls box
+    drawFilledRect(455, 485, 883, 637, 0.10f, 0.09f, 0.19f);
+    drawBorderRect(455, 485, 883, 637, 0.25f, 0.22f, 0.43f);
+    drawFilledRect(456, 486, 882, 506, 0.12f, 0.10f, 0.22f);
+    glColor3f(0.56f, 0.52f, 0.76f);
+    glString(641, 500, GLUT_BITMAP_HELVETICA_12, "CONTROLS");
+    glColor3f(0.42f, 0.39f, 0.62f);
+    glString(465, 522, GLUT_BITMAP_HELVETICA_12, "< >          move left / right");
+    glString(465, 540, GLUT_BITMAP_HELVETICA_12, "v            soft drop");
+    glString(465, 558, GLUT_BITMAP_HELVETICA_12, "^ / Space    hard drop");
+    glString(465, 576, GLUT_BITMAP_HELVETICA_12, "R / W        rotate");
+    glString(465, 594, GLUT_BITMAP_HELVETICA_12, "S / ESC      menu");
 
     // ── Draw board with cascade offset ────────────────────────
     {
