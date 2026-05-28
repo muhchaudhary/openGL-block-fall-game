@@ -11,6 +11,7 @@
 #include "Cell.h"
 #include "block.h"
 #include "GLwindow.h"
+#include "audio.h"
 
 // ── global game state ───────────────────────────────────────────────────────
 std::vector<std::vector<Cell>> board;
@@ -66,7 +67,7 @@ float cascadeOffset = 0.0f;
 float cascadeStep   = 0.0f;
 
 // ── settings state ───────────────────────────────────────────────────────────
-int  settingsSelected = 0;   // 0=speed, 1=ghost, 2=resume, 3=quit
+int  settingsSelected = 0;   // 0=speed, 1=ghost, 2=music, 3=resume, 4=quit
 int  speedIndex       = 1;   // 0=Slow 1=Normal 2=Fast 3=Insane
 bool ghostEnabled     = true;
 
@@ -100,8 +101,8 @@ void displaySettings() {
     glClearColor(0.04f, 0.04f, 0.08f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    const float px1 = 220.0f, py1 = 185.0f;
-    const float px2 = 680.0f, py2 = 578.0f;
+    const float px1 = 220.0f, py1 = 165.0f;
+    const float px2 = 680.0f, py2 = 612.0f;
 
     // Drop shadow
     drawFilledRect(px1+6, py1+6, px2+6, py2+6, 0.0f, 0.0f, 0.0f);
@@ -127,9 +128,8 @@ void displaySettings() {
 
     char buf[80];
     float optX = px1 + 42.0f;
-    float optY = py1 + 108.0f;
+    float optY = py1 + 100.0f;
 
-    // Draw row highlight when selected
     auto rowBg = [&](float y, bool sel, float r, float g, float b) {
         if (sel) drawFilledRect(px1+14, y-24, px2-14, y+10, r, g, b);
     };
@@ -147,15 +147,23 @@ void displaySettings() {
     glString(optX, optY, GLUT_BITMAP_HELVETICA_18, buf);
 
     // ── GHOST PIECE ───────────────────────────────────────────────────────────
-    optY += 66.0f;
+    optY += 60.0f;
     bool s1 = (settingsSelected == 1);
     rowBg(optY, s1, 0.14f, 0.12f, 0.28f);
     rowColor(s1);
     snprintf(buf, sizeof(buf), "GHOST PIECE    < %s >", ghostEnabled ? "ON " : "OFF");
     glString(optX, optY, GLUT_BITMAP_HELVETICA_18, buf);
 
+    // ── MUSIC ─────────────────────────────────────────────────────────────────
+    optY += 60.0f;
+    bool s2 = (settingsSelected == 2);
+    rowBg(optY, s2, 0.14f, 0.12f, 0.28f);
+    rowColor(s2);
+    snprintf(buf, sizeof(buf), "MUSIC          < %s >", Audio_GetMusicEnabled() ? "ON " : "OFF");
+    glString(optX, optY, GLUT_BITMAP_HELVETICA_18, buf);
+
     // Section divider
-    optY += 44.0f;
+    optY += 46.0f;
     glColor3f(0.20f, 0.17f, 0.33f);
     glBegin(GL_LINES);
         glVertex2f(px1+30, optY); glVertex2f(px2-30, optY);
@@ -163,20 +171,20 @@ void displaySettings() {
     optY += 32.0f;
 
     // ── RESUME ────────────────────────────────────────────────────────────────
-    bool s2 = (settingsSelected == 2);
-    if (s2) drawFilledRect(px1+14, optY-24, px2-14, optY+10, 0.08f, 0.18f, 0.10f);
-    glColor3f(s2 ? 0.35f : 0.42f,
-              s2 ? 1.00f : 0.72f,
-              s2 ? 0.50f : 0.54f);
+    bool s3 = (settingsSelected == 3);
+    if (s3) drawFilledRect(px1+14, optY-24, px2-14, optY+10, 0.08f, 0.18f, 0.10f);
+    glColor3f(s3 ? 0.35f : 0.42f,
+              s3 ? 1.00f : 0.72f,
+              s3 ? 0.50f : 0.54f);
     glString(px1 + 158.0f, optY, GLUT_BITMAP_HELVETICA_18, "[ RESUME GAME ]");
 
     // ── QUIT ──────────────────────────────────────────────────────────────────
     optY += 56.0f;
-    bool s3 = (settingsSelected == 3);
-    if (s3) drawFilledRect(px1+14, optY-24, px2-14, optY+10, 0.20f, 0.07f, 0.07f);
-    glColor3f(s3 ? 1.00f : 0.72f,
-              s3 ? 0.32f : 0.38f,
-              s3 ? 0.32f : 0.38f);
+    bool s4 = (settingsSelected == 4);
+    if (s4) drawFilledRect(px1+14, optY-24, px2-14, optY+10, 0.20f, 0.07f, 0.07f);
+    glColor3f(s4 ? 1.00f : 0.72f,
+              s4 ? 0.32f : 0.38f,
+              s4 ? 0.32f : 0.38f);
     glString(px1 + 170.0f, optY, GLUT_BITMAP_HELVETICA_18, "[    QUIT    ]");
 
     // Navigation hint
@@ -220,6 +228,8 @@ static bool spawnNextBlock() {
     genBlocks(currBlock, 1, currBlockPoints, board);
     if (!shift(4, 0, offset, 1, currBlockPoints, board)) {
         gameState = GAME_OVER;
+        Audio_StopMusic();
+        Audio_PlayGameOver();
         return false;
     }
     return true;
@@ -241,6 +251,7 @@ void afterFlash(int) {
 
     if (cleared >= 1 && cleared <= 4) {
         score += scoreTable[cleared];
+        Audio_PlayLineClear(cleared);
 
         // Floating score popup in the center of the board
         FloatText ft;
@@ -262,6 +273,7 @@ void afterFlash(int) {
             level = newLevel;
             int base = speedValues[speedIndex];
             fallSpeed = std::max(100, base - (level - 1) * 60);
+            Audio_PlayLevelUp();
         }
 
         // Cascade animation
@@ -278,7 +290,7 @@ void restartGame();  // forward declaration
 
 void process_Normal_Keys(int key, int x, int y) {
     if (gameState == SETTINGS) {
-        const int N = 4;
+        const int N = 5;
         switch (key) {
             case 101: settingsSelected = (settingsSelected - 1 + N) % N; break;
             case 103: settingsSelected = (settingsSelected + 1) % N;     break;
@@ -288,6 +300,8 @@ void process_Normal_Keys(int key, int x, int y) {
                     fallSpeed  = std::max(100, speedValues[speedIndex] - (level - 1) * 60);
                 } else if (settingsSelected == 1) {
                     ghostEnabled = !ghostEnabled;
+                } else if (settingsSelected == 2) {
+                    Audio_SetMusicEnabled(!Audio_GetMusicEnabled());
                 }
                 break;
             case 102:
@@ -296,6 +310,8 @@ void process_Normal_Keys(int key, int x, int y) {
                     fallSpeed  = std::max(100, speedValues[speedIndex] - (level - 1) * 60);
                 } else if (settingsSelected == 1) {
                     ghostEnabled = !ghostEnabled;
+                } else if (settingsSelected == 2) {
+                    Audio_SetMusicEnabled(!Audio_GetMusicEnabled());
                 }
                 break;
         }
@@ -337,13 +353,15 @@ void char_keys(unsigned char key, int x, int y) {
             case 's': gameState = PLAYING; break;
             case 13:  // Enter
             case 32:  // Space
-                if      (settingsSelected == 2) { gameState = PLAYING; }
-                else if (settingsSelected == 3) { exit(0); }
+                if      (settingsSelected == 3) { gameState = PLAYING; }
+                else if (settingsSelected == 4) { exit(0); }
                 else if (settingsSelected == 0) {
                     speedIndex = (speedIndex + 1) % 4;
                     fallSpeed  = speedValues[speedIndex];
                 } else if (settingsSelected == 1) {
                     ghostEnabled = !ghostEnabled;
+                } else if (settingsSelected == 2) {
+                    Audio_SetMusicEnabled(!Audio_GetMusicEnabled());
                 }
                 break;
         }
@@ -429,7 +447,7 @@ void key_movement(int now_runs) {
         move_down = false;
         player_moved = true;
     } else if (move_right) {
-        shift(1, 0, offset, 1, currBlockPoints, board);
+        if (shift(1, 0, offset, 1, currBlockPoints, board)) Audio_PlayMove();
         if (lockDelayActive) {
             if (validBounds(currBlockPoints, 0, 1, board)) { lockDelayActive = false; lockDelayGen++; }
             else { lockDelayGen++; glutTimerFunc(500, lockDelayFire, lockDelayGen); }
@@ -437,7 +455,7 @@ void key_movement(int now_runs) {
         move_right = false;
         player_moved = true;
     } else if (move_left) {
-        shift(-1, 0, offset, 1, currBlockPoints, board);
+        if (shift(-1, 0, offset, 1, currBlockPoints, board)) Audio_PlayMove();
         if (lockDelayActive) {
             if (validBounds(currBlockPoints, 0, 1, board)) { lockDelayActive = false; lockDelayGen++; }
             else { lockDelayGen++; glutTimerFunc(500, lockDelayFire, lockDelayGen); }
@@ -451,12 +469,12 @@ void key_movement(int now_runs) {
         drop_down = false;
         player_moved = true;
     } else if (rotate_cc) {
-        rotate(1, offset, 1, currBlockPoints, board);
+        if (rotate(1, offset, 1, currBlockPoints, board)) Audio_PlayRotate();
         if (lockDelayActive) { lockDelayGen++; glutTimerFunc(500, lockDelayFire, lockDelayGen); }
         rotate_cc = false;
         player_moved = true;
     } else if (rotate_ccw) {
-        rotate(-1, offset, 1, currBlockPoints, board);
+        if (rotate(-1, offset, 1, currBlockPoints, board)) Audio_PlayRotate();
         if (lockDelayActive) { lockDelayGen++; glutTimerFunc(500, lockDelayFire, lockDelayGen); }
         rotate_ccw = false;
         player_moved = true;
@@ -470,6 +488,7 @@ void key_movement(int now_runs) {
             isFlashing   = true;
             glutTimerFunc(80, afterFlash, 0);
         } else {
+            Audio_PlayLand();
             // Brief bright pulse on the locked cells
             lockPulseCells.assign(currBlockPoints.begin(), currBlockPoints.begin() + 4);
             lockPulseActive = true;
@@ -715,6 +734,7 @@ void restartGame() {
     draw_block = false;
 
     gameState  = PLAYING;
+    Audio_StartMusic();
 }
 
 int main(int argc, char **argv) {
@@ -722,6 +742,7 @@ int main(int argc, char **argv) {
     if (timespec_get(&ts, TIME_UTC) == 0) exit(1);
     srandom(ts.tv_nsec ^ ts.tv_sec);
 
+    Audio_Init();
     setDisp();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
@@ -734,6 +755,7 @@ int main(int argc, char **argv) {
     glutDisplayFunc(display);
 
     int frame_ms = (int)calculate_frames(60);
+    Audio_StartMusic();
     glutTimerFunc(0, fps,             frame_ms);
     glutTimerFunc(0, drawFallingBlock, fallSpeed);
     glutTimerFunc(0, key_movement,    frame_ms);

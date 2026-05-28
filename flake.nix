@@ -72,6 +72,7 @@
         freeglut
         libGL
         libGLU
+        openal
         graphify
       ];
     };
