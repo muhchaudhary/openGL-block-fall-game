@@ -233,7 +233,8 @@ void Audio_Init() {
     loadBuf(musicBuf, buildMusic());
     alSourcei(musicSrc, AL_BUFFER,  musicBuf);
     alSourcei(musicSrc, AL_LOOPING, AL_TRUE);
-    alSourcef(musicSrc, AL_GAIN,    0.55f);
+    alSourcef(musicSrc, AL_GAIN,    0.65f);
+    alSourcePlay(musicSrc);
 }
 
 void Audio_Shutdown() {
@@ -277,9 +278,8 @@ void Audio_PlayGameOver() { playSFX(SFX_GAMEOVER); }
 
 void Audio_StartMusic() {
     if (!musicEnabled || !ctx) return;
-    ALint state;
-    alGetSourcei(musicSrc, AL_SOURCE_STATE, &state);
-    if (state != AL_PLAYING) alSourcePlay(musicSrc);
+    alSourceStop(musicSrc);
+    alSourcePlay(musicSrc);
 }
 
 void Audio_StopMusic() {
